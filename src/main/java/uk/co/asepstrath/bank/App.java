@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class App extends Jooby {
 
@@ -47,7 +48,7 @@ public class App extends Jooby {
     public static void main(final String[] args) {
         runApp(args, App::new);
     }
-
+    ArrayList<Account> data = new ArrayList<>();
     /*
     This function will be called when the application starts up,
     it should be used to ensure that the DB is properly setup
@@ -67,8 +68,24 @@ public class App extends Jooby {
         } catch (SQLException e) {
             log.error("Database Creation Error",e);
         }
+
+        data.add(new Account("Rachel",50));
+        data.add(new Account("Monica", 100));
+        data.add(new Account("Phoebe",76));
+        data.add(new Account("Joey",23.90));
+        data.add(new Account("Chandler",3));
+        data.add(new Account("Ross",54.32));
     }
 
+    public ArrayList<Account> getList(){
+        return data;
+    }
+
+    public void printList(){
+        for(int i = 0;i<data.size();i++){
+            System.out.println(data.get(i).getName() + " | £" + data.get(i).getBalance());
+        }
+    }
     /*
     This function will be called when the application shuts down
      */
