@@ -10,9 +10,18 @@ import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class App extends Jooby {
+    Account Rachel = new Account(50);
+    Account Monica = new Account(100);
+    Account Phoebe = new Account(76);
+    Account Joey = new Account(23.90);
+    Account Chandler = new Account(3);
+    Account Ross = new Account(54.42);
+
 
     {
         /*
@@ -55,6 +64,16 @@ public class App extends Jooby {
     public void onStart() {
         Logger log = getLog();
         log.info("Starting Up...");
+        ArrayList<Account> users = new ArrayList<Account>(6);
+        users.add(Rachel);
+        users.add(Monica);
+        users.add(Phoebe);
+        users.add(Joey);
+        users.add(Chandler);
+        users.add(Ross);
+        for(int i =0; i<users.size(); i++){
+            System.out.println(users.get(i).getBalance());
+        }
 
         // Fetch DB Source
         DataSource ds = require(DataSource.class);

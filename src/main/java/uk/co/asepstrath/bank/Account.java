@@ -1,14 +1,32 @@
 package uk.co.asepstrath.bank;
 
 public class Account {
-
-
-    public void deposit(int amount) {
-
+    double wealth;
+    Account(double wealth){
+        this.wealth=wealth;
     }
 
-    public int getBalance() {
-        return 0;
+    public double deposit(double amount) {
+
+        wealth= wealth+amount;
+        wealth=Math.round(wealth * 100d) / 100d;
+        return wealth;
+
+    }
+    public double withdraw(double amount){
+        wealth= wealth-amount;
+        wealth=Math.round(wealth * 100d) / 100d;
+            if(wealth>=0){
+                return wealth;
+            }else{
+                throw new ArithmeticException();
+            }
+
+
+
+    }
+    public double getBalance() {
+        return wealth;
     }
 
 }
