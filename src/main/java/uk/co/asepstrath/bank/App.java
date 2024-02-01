@@ -8,9 +8,11 @@ import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class App extends Jooby {
 
@@ -64,9 +66,21 @@ public class App extends Jooby {
             Statement stmt = connection.createStatement();
             stmt.executeUpdate("CREATE TABLE `Example` (`Key` varchar(255),`Value` varchar(255))");
             stmt.executeUpdate("INSERT INTO Example " + "VALUES ('WelcomeMessage', 'Welcome to A Bank')");
+
         } catch (SQLException e) {
             log.error("Database Creation Error",e);
         }
+
+        //Populate arraylist of accounts
+        ArrayList<Account> accounts = new ArrayList<>();
+        /*
+        accounts.add(new Account("Rachel",new BigDecimal("50")));
+        accounts.add(new Account("Monica",new BigDecimal("100")));
+        accounts.add(new Account("Phoebe",new BigDecimal("76")));
+        accounts.add(new Account("Joey",new BigDecimal("23.90")));
+        accounts.add(new Account("Chandler",new BigDecimal("3")));
+        accounts.add(new Account("Ross",new BigDecimal("54.32")));
+         */
     }
 
     /*
