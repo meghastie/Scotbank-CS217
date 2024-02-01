@@ -30,6 +30,8 @@ public class Account {
         return balance.toString();
     }
 
+    public String getName(){return name;}
+
     public void withdraw(BigDecimal amount){
         if(amount.compareTo(balance)<=0) {
             balance = balance.subtract(amount);
