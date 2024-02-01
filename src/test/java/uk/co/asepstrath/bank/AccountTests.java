@@ -1,6 +1,4 @@
 package uk.co.asepstrath.bank;
-
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
@@ -9,13 +7,13 @@ public class AccountTests {
     @Test
     public void createAccount(){
         Account a = new Account();
-        assertTrue(a != null);
+        assertNotNull(a);
     }
 
     @Test
     public void newAccountValue_0(){
         Account a = new Account();
-        assertTrue(a.getBalance().equals("0"));
+        assertEquals("0", a.getBalance());
     }
 
     @Test
