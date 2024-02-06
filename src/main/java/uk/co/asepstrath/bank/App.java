@@ -75,6 +75,7 @@ public class App extends Jooby {
         data.add(new Account("Joey",23.90));
         data.add(new Account("Chandler",3));
         data.add(new Account("Ross",54.32));
+
     }
 
     public ArrayList<Account> getList(){
