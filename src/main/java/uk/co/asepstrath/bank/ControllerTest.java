@@ -19,7 +19,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-@Path("/test")
+@Path("/tests")
 public class ControllerTest {
     private final DataSource dataSource;
     private final Logger logger;
@@ -27,9 +27,10 @@ public class ControllerTest {
         dataSource = ds;
         logger = log;
     }
-    @GET("/api/accounts")
+    @GET("/accounts")
     public String sayHi() {
-        return "Hello " + Unirest.get("https://api.asep-strath.co.uk/").asString().getBody();
+        return Unirest.get("https://api.asep-strath.co.uk/api/accounts").asObject().getBody();
+//
     }
 
 }
