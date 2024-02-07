@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public class Account {
 
     private BigDecimal dec;
+    public String userID;
     private String name;
     private String accNum;
     private String sortCode;
