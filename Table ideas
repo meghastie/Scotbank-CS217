@@ -1,0 +1,17 @@
+Table 1
+
+user data 
+userId, username, password, account number, sort code, card number, cvc, balance?
+
+
+Table 2 - transactions
+userID, companyID, transaction amount, transactionID, time
+
+Table 3 - company data
+
+companyId, company name, company type (restaurant, groceries etc)
+
+Table 4 - employee data 
+
+employee ID, access level(what info can they see), name, position etc(not relevant to us)
+
