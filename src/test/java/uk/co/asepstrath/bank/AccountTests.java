@@ -6,22 +6,20 @@ import org.junit.jupiter.api.Test;
 import java.rmi.MarshalException;
 
 public class AccountTests {
-
+        Account a = new Account("kath","00000001","00-00-01","0000111122223333","123", "kathy","pat",0);
     @Test
     public void createAccount(){
-        Account a = new Account("s",0);
         assertTrue(a != null);
     }
 
     @Test
     public void emptyAccount(){
-        Account a = new Account("s",0);
         assertTrue(a.getBalance()==0);
     }
 
     @Test
     public void totalFunds(){
-        Account a = new Account("s",0);
+        a.withdraw(a.getBalance());
         a.deposit(20);
         a.deposit(50);
         assertTrue(a.getBalance()==70);
@@ -29,7 +27,7 @@ public class AccountTests {
 
     @Test
     public void withdraw(){
-        Account a =new Account("s",0);
+        a.withdraw(a.getBalance());
         a.deposit(40);
         a.withdraw(20);
         assertTrue(a.getBalance() == 20);
@@ -37,7 +35,7 @@ public class AccountTests {
     }
     @Test
     public void overdraft(){
-        Account a = new Account("s",0);
+        a.withdraw(a.getBalance());
         a.deposit(30);
         Assertions.assertThrows(ArithmeticException.class,() -> a.withdraw(100));
 
@@ -45,7 +43,7 @@ public class AccountTests {
 
     @Test
     public void superSaving(){
-        Account a = new Account("s",0);
+        a.withdraw(a.getBalance());
         a.deposit(20);
         for(int i = 0;i<5;i++){
             a.deposit(10);
@@ -59,7 +57,7 @@ public class AccountTests {
 
     @Test
     public void pennies(){
-        Account a = new Account("s",0);
+        a.withdraw(a.getBalance());
         a.deposit(17.56);
         a.deposit(5.45);
         System.out.println(a.getBalance());

@@ -18,6 +18,8 @@ public class Account {
         setAccountNumber(acc);
         setCardNumber(card);
         setCVC(cv);
+        username = user;
+        password = pass;
         dec = BigDecimal.valueOf(amount);
     }
     public String getName(){ return name; }
@@ -51,15 +53,15 @@ public class Account {
     }
 
     public void setName(String nm){ name = nm;}
-    public void setAccountNumber(String acc){
+    private void setAccountNumber(String acc){
         if(acc.length() != 8){
-            System.out.println("Account  Number error");
+            System.out.println("Account number error");
         }
         else{
             accNum = acc;
         }
     }
-    public void setCVC(String CVC){
+    private void setCVC(String CVC){
         if(CVC.length() != 3){
             System.out.print("CVC error");
         }
@@ -67,7 +69,7 @@ public class Account {
             cvc = CVC;
         }
     }
-    public void setCardNumber(String card){
+    private void setCardNumber(String card){
         if(card.length() != 16){
             System.out.println("card number error");
         }
@@ -75,5 +77,14 @@ public class Account {
             cardNumber = card;
         }
     }
+    private void changePassword(String current, String newpass){
+        if(current.equals(password)){
+            password = newpass;
+        }
+        else{
+            System.out.println("Wrong password");
+        }
+    }
+
 }
 
