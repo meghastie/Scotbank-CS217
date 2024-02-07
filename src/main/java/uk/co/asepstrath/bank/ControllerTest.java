@@ -1,0 +1,35 @@
+package uk.co.asepstrath.bank;
+
+import io.jooby.annotation.GET;
+import io.jooby.annotation.Path;
+import kong.unirest.core.Unirest;
+
+import io.jooby.ModelAndView;
+import io.jooby.StatusCode;
+import io.jooby.annotation.*;
+import io.jooby.exception.StatusCodeException;
+import kong.unirest.core.Unirest;
+import org.slf4j.Logger;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+@Path("/test")
+public class ControllerTest {
+    private final DataSource dataSource;
+    private final Logger logger;
+    public ControllerTest(DataSource ds, Logger log){
+        dataSource = ds;
+        logger = log;
+    }
+    @GET("/api/accounts")
+    public String sayHi() {
+        return "Hello " + Unirest.get("https://api.asep-strath.co.uk/").asString().getBody();
+    }
+
+}
