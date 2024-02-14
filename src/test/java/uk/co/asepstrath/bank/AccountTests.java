@@ -1,56 +1,69 @@
 package uk.co.asepstrath.bank;
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.math.BigDecimal;
-public class AccountTests {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
+import java.rmi.MarshalException;
+
+public class AccountTests {
+    Account a = new Account("kath","00000001","00-00-01","0000111122223333","123", "kathy","pat",0);
     @Test
     public void createAccount(){
-        Account a = new Account();
-        assertNotNull(a);
+        assertTrue(a != null);
     }
 
     @Test
-    public void newAccountValue_0(){
-        Account a = new Account();
-        assertEquals("0", a.getBalance());
+    public void emptyAccount(){
+        assertTrue(a.getBalance()==0);
     }
 
     @Test
-    public void addingFunds(){
-        Account a = new Account();
-        a.deposit(new BigDecimal(20));
-        a.deposit(new BigDecimal(50));
-        assertEquals("70",a.getBalance());
+    public void totalFunds(){
+        a.withdraw(a.getBalance());
+        a.deposit(20);
+        a.deposit(50);
+        assertTrue(a.getBalance()==70);
     }
 
     @Test
-    public void withdrawFunds(){
-        Account a = new Account();
-        a.deposit(new BigDecimal(40));
-        a.withdraw(new BigDecimal(20));
-        assertEquals("20",a.getBalance());
-    }
+    public void withdraw(){
+        a.withdraw(a.getBalance());
+        a.deposit(40);
+        a.withdraw(20);
+        assertTrue(a.getBalance() == 20);
 
+    }
     @Test
     public void overdraft(){
-        Account a = new Account();
-        a.deposit(new BigDecimal(30));
-        assertThrows(ArithmeticException.class,() -> a.withdraw(new BigDecimal(100)));
+        a.withdraw(a.getBalance());
+        a.deposit(30);
+        Assertions.assertThrows(ArithmeticException.class,() -> a.withdraw(100));
+
     }
 
     @Test
-    public void lotsOfDepositAndWithdraw(){
-        Account a = new Account(new BigDecimal(20));
-        for(int i=0;i<5;i++){a.deposit(new BigDecimal(10));}
-        for(int i=0;i<3;i++){a.withdraw(new BigDecimal(20));}
-        assertEquals("10",a.getBalance());
+    public void superSaving(){
+        a.withdraw(a.getBalance());
+        a.deposit(20);
+        for(int i = 0;i<5;i++){
+            a.deposit(10);
+        }
+        for(int i = 0;i<3;i++){
+            a.withdraw(20);
+        }
+        assertTrue(a.getBalance() == 10);
+
     }
 
     @Test
-    public void usingDoubles(){
-        Account a = new Account(new BigDecimal("5.45"));
-        a.deposit(new BigDecimal("17.56"));
-        assertEquals("23.01",a.getBalance());
+    public void pennies(){
+        a.withdraw(a.getBalance());
+        a.deposit(17.56);
+        a.deposit(5.45);
+        System.out.println(a.getBalance());
+        assertTrue(a.getBalance() == 23.01);
+
     }
+
+
 }
