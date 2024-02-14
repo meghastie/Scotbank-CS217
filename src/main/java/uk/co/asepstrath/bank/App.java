@@ -75,15 +75,13 @@ public class App extends Jooby {
 
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXSITS `Account` (\n"
-                    + "`sortCode` integer NOT NULL, \n"
-                    + "`accNum` integer NOT NULL, \n"
+                    + "`AccountId` varchar(50) NOT NULL, \n"
+                    + "`customerName` varchar(100) NOT NULL, \n"
                     + "`AccountType` varchar(45) NOT NULL \n"
-                    + "`balance` integer NOT NULL \n"
-                    + "`openDate` date NOT NULL, \n"
-                    + "`cardNumber` integer NOT NULL"
-                    + "`username` varchar(255) NOT NULL \n"
-                    + "PRIMARY KEY (`accountNo`, `sortCode`)," //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
-                    + "FOREIGN KEY (`username`) REFERENCES `Customer`(`username`)"
+                    + "`startingbalance` double NOT NULL \n"
+                    + "`RoundUpEnabled` varchar(10) NOT NULL \n"
+                    + "PRIMARY KEY (`AccountId`)," //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
+                    + "FOREIGN KEY (`customerName`) REFERENCES `Customer`(`customerName`)"
                     + ")");
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXSITS `Transaction` (\n"
@@ -110,17 +108,17 @@ public class App extends Jooby {
             String sql = "SELECT * FROM Customer";
             ResultSet rs = stmt.executeQuery(sql);
 
-
-            while (rs.next()) {
-              int id = rs.getInt("id");
-            String name = rs.getString("name");
-            int age = rs.getInt("phone");
-            String address = rs.getString("address");
-            double salary = rs.getDouble("salary");
-            java.sql.Date date = rs.getDate("dob");
-            Employee employee = new Employee(id, name, age, address, salary);
-            }
-            rs.close();
+            //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE
+            //while (rs.next()) {
+            //  int id = rs.getInt("id");
+            //String name = rs.getString("name");
+            //int age = rs.getInt("phone");
+            //String address = rs.getString("address");
+            //double salary = rs.getDouble("salary");
+            //java.sql.Date date = rs.getDate("dob");
+            //Employee employee = new Employee(id, name, age, address, salary);
+            //}
+            //rs.close();``
 
 
 
@@ -139,3 +137,4 @@ public class App extends Jooby {
     }
 
 }
+
