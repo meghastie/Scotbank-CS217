@@ -13,6 +13,8 @@ public class Account {
     private String cvc;
     private String username;
     private String password;
+    private Boolean roundUp;
+    private double startingBalance
 
     public Account(String nme, String acc, String sort, String card, String cv,  String user, String pass, int amount) {
         name = nme;
@@ -23,6 +25,14 @@ public class Account {
         password = pass;
         dec = BigDecimal.valueOf(amount);
     }
+
+    public Account(String id, String name, double startBalance, boolean roundUp){
+        this.id = id;
+        this.name = name;
+        this.startingBalance = startBalance;
+        this.roundUp = roundUp;
+    }
+
     public String getName(){ return name; }
 
     public String toString(){
