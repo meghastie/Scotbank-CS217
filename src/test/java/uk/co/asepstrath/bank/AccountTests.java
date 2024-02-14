@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.rmi.MarshalException;
 
 public class AccountTests {
-    Account a = new Account("kath","00000001","00-00-01","0000111122223333","123", "kathy","pat",0);
+        Account a = new Account("0", "kath", 0, false);
     @Test
     public void createAccount(){
         assertTrue(a != null);

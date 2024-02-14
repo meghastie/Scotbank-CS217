@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class Account {
 
     private BigDecimal dec;
-    public String userID;
+    public String id;
     private String name;
     private String accNum;
     private String sortCode;
@@ -13,26 +13,23 @@ public class Account {
     private String cvc;
     private String username;
     private String password;
-    private Boolean roundUp;
-    private double startingBalance
+    private boolean roundUpEnabled;
 
-    public Account(String nme, String acc, String sort, String card, String cv,  String user, String pass, int amount) {
+    public Account(String id, String nme, double balance, boolean round) {
+        id = this.id;
+        name = nme;
+        dec = BigDecimal.valueOf(balance);
+        roundUpEnabled = round;
+
+        /*String nme, String acc, String sort, String card, String cv,  String user, String pass, int amount
         name = nme;
         setAccountNumber(acc);
         setCardNumber(card);
         setCVC(cv);
         username = user;
         password = pass;
-        dec = BigDecimal.valueOf(amount);
+        dec = BigDecimal.valueOf(amount); */
     }
-
-    public Account(String id, String name, double startBalance, boolean roundUp){
-        this.id = id;
-        this.name = name;
-        this.startingBalance = startBalance;
-        this.roundUp = roundUp;
-    }
-
     public String getName(){ return name; }
 
     public String toString(){
@@ -70,6 +67,14 @@ public class Account {
         }
         else{
             accNum = acc;
+        }
+    }
+    private void setSortCode(String srt){
+        if(srt.length() != 6){
+            System.out.print("sort code error");
+        }
+        else{
+            sortCode = srt;
         }
     }
     private void setCVC(String CVC){
