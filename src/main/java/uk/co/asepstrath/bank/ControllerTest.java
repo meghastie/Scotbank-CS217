@@ -35,6 +35,3 @@ public class ControllerTest {
 
 }
 
-//    HttpResponse<accounts> bookResponse =
-//            Unirest.get("https://api.asep-strath.co.uk/api/accounts").asObject(accounts.name);
-//    Book bookObject = bookResponse.getBody();
