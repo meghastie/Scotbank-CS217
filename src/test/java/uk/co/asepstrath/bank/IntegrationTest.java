@@ -13,6 +13,7 @@ public class IntegrationTest {
     Example can be found in example/IntegrationTest.java
      */
     @Test
+
     public void testFetchAccountDataIntegration() {
         Manager manager = new Manager();
         ArrayList<Account> accounts = manager.fetchAccountData();
