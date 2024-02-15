@@ -14,22 +14,25 @@ public class Account {
     private String username;
     private String password;
     private boolean roundUpEnabled;
+    private double startingBalance;
 
     public Account(String id, String nme, double balance, boolean round) {
-        id = this.id;
+        this.id = id;
         name = nme;
-        dec = BigDecimal.valueOf(balance);
+        startingBalance = balance;
         roundUpEnabled = round;
+    }
 
-        /*String nme, String acc, String sort, String card, String cv,  String user, String pass, int amount
-        name = nme;
+    public Account(String name, String acc, String sort, String card, String cv,  String user, String pass, int amount){
+        this.name = name;
         setAccountNumber(acc);
         setCardNumber(card);
         setCVC(cv);
         username = user;
         password = pass;
-        dec = BigDecimal.valueOf(amount); */
+        dec = BigDecimal.valueOf(amount);
     }
+
     public String getName(){ return name; }
 
     public String toString(){
@@ -56,6 +59,10 @@ public class Account {
     public String getCardNumber(){ return cardNumber; }
     public String getCvc(){ return cvc; }
     public String getUsername(){ return username; }
+    public String getId(){return id;}
+    public double getStartingBalance(){return startingBalance;}
+    public boolean getRoundUp(){return roundUpEnabled;}
+
     public boolean checkPassword(String guess){
         return guess.equals(password);
     }

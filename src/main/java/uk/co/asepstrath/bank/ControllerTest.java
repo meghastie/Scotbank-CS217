@@ -12,13 +12,10 @@ import kong.unirest.core.Unirest;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.sql.*;
+import java.util.*;
+import java.util.Date;
+
 @Path("/tests")
 public class ControllerTest {
     private final DataSource dataSource;
@@ -29,7 +26,26 @@ public class ControllerTest {
     }
     @GET("/accounts")
     public String sayHi() {
-        return Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
+        String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
+        StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
+
+        ArrayList<Account> accounts = new ArrayList<>();
+
+        while(tokens.hasMoreTokens()){
+            tokens.nextToken();     //id
+            String id = tokens.nextToken();
+            tokens.nextToken();     //name
+            String name = tokens.nextToken();
+            tokens.nextToken();     //starting bal
+            String bal = tokens.nextToken();
+            tokens.nextToken();     //roundup
+            String roundup = tokens.nextToken();
+
+            accounts.add(new Account(id,name,Double.parseDouble(bal),Boolean.parseBoolean(roundup)));
+        }
+
+
+        return accounts.toString();
 //
     }
 
