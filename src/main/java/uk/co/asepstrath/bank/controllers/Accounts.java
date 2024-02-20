@@ -1,26 +1,20 @@
-package uk.co.asepstrath.bank;
+package uk.co.asepstrath.bank.controllers;
 
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import kong.unirest.core.Unirest;
 
-import io.jooby.ModelAndView;
-import io.jooby.StatusCode;
-import io.jooby.annotation.*;
-import io.jooby.exception.StatusCodeException;
-import kong.unirest.core.Unirest;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.Account;
 
 import javax.sql.DataSource;
-import java.sql.*;
 import java.util.*;
-import java.util.Date;
 
-@Path("/tests")
-public class ControllerTest {
+@Path("/bank")
+public class Accounts {
     private final DataSource dataSource;
     private final Logger logger;
-    public ControllerTest(DataSource ds, Logger log){
+    public Accounts(DataSource ds, Logger log){
         dataSource = ds;
         logger = log;
     }
