@@ -1,4 +1,4 @@
-package uk.co.asepstrath.bank;
+package uk.co.asepstrath.bank.models;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class Account {
     private String password;
     private boolean roundUpEnabled;
     private double startingBalance;
-    private ArrayList<Transaction> myTransactions;
+    private ArrayList<Transactions> myTransactions;
 
     public Account(String id, String name, double balance, boolean round) {
         this.id = id;
@@ -44,7 +44,7 @@ public class Account {
         System.out.println(dec);
         return name + " - " + dec.toString();
     }
-    public boolean myTranaction(Transaction t){
+    public boolean myTranaction(Transactions t){
         if(t.getFrom().equals(name)){
             withdraw(t.getAmount());
             if(roundUpEnabled){

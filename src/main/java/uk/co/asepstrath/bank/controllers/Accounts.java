@@ -1,13 +1,20 @@
 package uk.co.asepstrath.bank.controllers;
 
+import io.jooby.StatusCode;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
+import io.jooby.annotation.QueryParam;
+import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.Unirest;
 
 import org.slf4j.Logger;
-import uk.co.asepstrath.bank.Account;
+import uk.co.asepstrath.bank.models.Account;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 @Path("/bank")
@@ -41,6 +48,24 @@ public class Accounts {
 
         return accounts.toString();
 //
+    }
+
+    @GET("/details")
+    public String printAccountDetails(@QueryParam String id){
+        if(id == null) return "no id!";
+        try(Connection connection = dataSource.getConnection()){
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery("SELECT * FROM `AccountList` Where `AccountId` = '"+id+"'");
+            set.next();
+
+            //change this
+            return set.getString("customerName");
+        } catch (SQLException e){
+            // If something does go wrong this will log the stack trace
+            logger.error("Database Error Occurred",e);
+            // And return a HTTP 500 error to the requester
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank;
 
 import io.jooby.Jooby;
 import kong.unirest.core.*;
+import uk.co.asepstrath.bank.models.Account;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;

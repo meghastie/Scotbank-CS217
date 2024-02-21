@@ -1,6 +1,7 @@
 package uk.co.asepstrath.bank;
 import static org.junit.jupiter.api.Assertions.*;
 import io.jooby.test.JoobyTest;
+import uk.co.asepstrath.bank.models.Account;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 

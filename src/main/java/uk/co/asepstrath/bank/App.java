@@ -1,5 +1,6 @@
 package uk.co.asepstrath.bank;
 
+import uk.co.asepstrath.bank.models.Account;
 import uk.co.asepstrath.bank.controllers.Accounts;
 import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
@@ -113,11 +114,12 @@ public class App extends Jooby {
 
 
             //prints accounts in Account database
+            /*
             ResultSet result = stmt.executeQuery("SELECT * FROM AccountList");
             while(result.next()){
                 System.out.println(result.getString("AccountId") + " " + result.getString("customerName") + " " + result.getDouble("startingbalance") + " " + result.getBoolean("RoundUpEnabled"));
             }
-
+            */
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
                     + "(`transactionID` integer NOT NUll,"
