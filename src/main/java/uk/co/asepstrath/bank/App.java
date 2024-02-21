@@ -70,6 +70,7 @@ public class App extends Jooby {
                     + "`name` varchar(255) NOT NULL \n"
                     + "`username` varchar(255) PRIMARY KEY \n" //two users cannot have same username, however they could possibly have same accNo - only unique identifier when paired with sort code
                     + "`passcode` varchar(255) NOT NULL \n"
+                    + "`dob` date NOT NULL,\n"
                     + ")");
 
 
@@ -84,11 +85,12 @@ public class App extends Jooby {
                     + ")");
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXSITS `Transaction` (\n"
-                    + "`transactionID` integer NOT NUll"
-                    + "`Type` varchar(15) NOT NULL, \n"
-                    + "`amount` double NOT NULL, \n"
-                    + "`to` varchar(50) \n"
-                    + "`from` varchar(50) integer  \n"
+                    + "`accNum` integer NOT NULL, \n"
+                    + "`sortCode` integer NOT NULL, \n"
+                    + "`transactionType` varchar(45) \n"
+                    + "`amount` integer NOT NULL \n"
+                    + "`transactionDate` date NOT NULL,\n"
+                    + "`username` varchar(255) NOT NULL \n"
                     + "`transactionID` integer PRIMARY KEY \n" //needed to uniquley identify the transaction as users can have many
                     + ")");
 
