@@ -6,7 +6,7 @@ import io.jooby.annotation.Path;
 import kong.unirest.core.Unirest;
 
 import org.slf4j.Logger;
-import uk.co.asepstrath.bank.Account;
+import uk.co.asepstrath.bank.Transaction;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -22,7 +22,7 @@ public class Transactions {
     public String getTransactions(){
         String response = Unirest.get("https://api.asep-strath.co.uk/api/transactions").asString().getBody();
         StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
-        ArrayList<Account> transactions = new ArrayList<>();
+        ArrayList<Transaction> transactions = new ArrayList<>();
 
         while(tokens.hasMoreTokens()){
             tokens.nextToken();     //time
@@ -38,8 +38,8 @@ public class Transactions {
             tokens.nextToken();     //type
             String type = tokens.nextToken();
 
-//            transactions.add(new Transactions(time, Double.parseDouble(amount), from, id, to, type));
-            return "13456";
+            transactions.add(new Transaction(time, Double.parseDouble(amount), from, id, to, type));
+            return "123456";
     }
         return "13456";
 }}

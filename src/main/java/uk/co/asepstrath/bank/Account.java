@@ -1,6 +1,7 @@
 package uk.co.asepstrath.bank;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class Account {
 
@@ -15,6 +16,7 @@ public class Account {
     private String password;
     private boolean roundUpEnabled;
     private double startingBalance;
+    private ArrayList<Transaction> myTransactions;
 
     public Account(String id, String name, double balance, boolean round) {
         this.id = id;
@@ -22,6 +24,7 @@ public class Account {
         startingBalance = balance;
         dec = BigDecimal.valueOf(balance);
         roundUpEnabled = round;
+        myTransactions = new ArrayList<>();
     }
 
     public Account(String name, String acc, String sort, String card, String cv,  String user, String pass, int amount){
@@ -40,6 +43,19 @@ public class Account {
         System.out.println("______________________________ATTENTION TESTING BIG DEC _______________________________________");
         System.out.println(dec);
         return name + " - " + dec.toString();
+    }
+    public void myTranaction(Transaction t){
+        if(t.getFrom().equals(name)){
+            withdraw(t.getAmount());
+            if(roundUpEnabled){
+                //do round up
+            }
+        } else if (t.getTo().equals(name)) {
+            deposit(t.getAmount());
+        }
+        else {
+            System.out.println("error with transaction");
+        }
     }
 
 
@@ -71,7 +87,7 @@ public class Account {
     }
 
     public void setName(String nm){ name = nm;}
-    private void setAccountNumber(String acc){
+    public void setAccountNumber(String acc){
         if(acc.length() != 8){
             System.out.println("Account number error");
         }
@@ -79,23 +95,23 @@ public class Account {
             accNum = acc;
         }
     }
-    private void setSortCode(String srt){
+    public void setSortCode(String srt){
         if(srt.length() != 6){
-            System.out.print("sort code error");
+            System.out.println("sort code error");
         }
         else{
             sortCode = srt;
         }
     }
-    private void setCVC(String CVC){
+    public void setCVC(String CVC){
         if(CVC.length() != 3){
-            System.out.print("CVC error");
+            System.out.println("CVC error");
         }
         else{
             cvc = CVC;
         }
     }
-    private void setCardNumber(String card){
+    public void setCardNumber(String card){
         if(card.length() != 16){
             System.out.println("card number error");
         }
@@ -103,7 +119,7 @@ public class Account {
             cardNumber = card;
         }
     }
-    private void changePassword(String current, String newpass){
+    public void changePassword(String current, String newpass){
         if(current.equals(password)){
             password = newpass;
         }
