@@ -16,10 +16,11 @@ public class Account {
     private boolean roundUpEnabled;
     private double startingBalance;
 
-    public Account(String id, String nme, double balance, boolean round) {
+    public Account(String id, String name, double balance, boolean round) {
         this.id = id;
-        name = nme;
+        this.name = name;
         startingBalance = balance;
+        dec = BigDecimal.valueOf(balance);
         roundUpEnabled = round;
     }
 
