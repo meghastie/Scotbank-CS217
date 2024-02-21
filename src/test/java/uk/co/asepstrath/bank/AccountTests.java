@@ -83,7 +83,7 @@ public class AccountTests {
     }
 
     @Test
-    public void setAccountNumber(){
+    public void AccountNumber(){
         a.setAccountNumber("12345678");
         assertTrue(a.getAccNum().equals("12345678"));
     }
@@ -94,7 +94,7 @@ public class AccountTests {
         assertNull(a.getAccNum());
     }
     @Test
-    public void setSortCode(){
+    public void SortCode(){
         a.setSortCode("123456");
         assertTrue(a.getSortCode().equals("123456"));
     }
@@ -106,7 +106,7 @@ public class AccountTests {
     }
 
     @Test
-    public void setCVC(){
+    public void CVC(){
         a.setCVC("123");
         assertTrue(a.getCvc().equals("123"));
     }
@@ -118,7 +118,7 @@ public class AccountTests {
     }
 
     @Test
-    public void setCardNumber(){
+    public void CardNumber(){
         a.setCardNumber("1234567812345678");
         assertTrue(a.getCardNumber().equals("1234567812345678"));
     }
@@ -128,6 +128,9 @@ public class AccountTests {
         a.setCardNumber("123");
         assertNull(a.getCardNumber());
     }
+
+
+
 
 
 
