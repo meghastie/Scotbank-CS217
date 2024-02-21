@@ -3,6 +3,7 @@ package uk.co.asepstrath.bank;
 import io.jooby.StatusCode;
 import io.jooby.test.MockRouter;
 import org.junit.jupiter.api.Test;
+import uk.co.asepstrath.bank.models.Account;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
