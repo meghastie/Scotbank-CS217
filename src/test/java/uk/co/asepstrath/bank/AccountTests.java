@@ -1,10 +1,11 @@
 package uk.co.asepstrath.bank;
 import static org.junit.jupiter.api.Assertions.*;
+
+import uk.co.asepstrath.bank.models.Account;
+import uk.co.asepstrath.bank.models.Transaction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.rmi.MarshalException;
 
 public class AccountTests {
     Account a;

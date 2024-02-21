@@ -1,4 +1,4 @@
-package uk.co.asepstrath.bank;
+package uk.co.asepstrath.bank.models;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
