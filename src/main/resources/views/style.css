@@ -1,0 +1,54 @@
+.main{
+    background: hsla(0, 12%, 91%, 1);
+    background: linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
+    background: -moz-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
+    background: -webkit-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    text-align: center;
+    padding-top:100px;
+}
+.login{
+    /* background-color: rgb(0, 0, 0); */
+    background-color: #c2c2c2a5;
+    background-size: cover;
+    /* opacity: 0.2; */
+    width: 30%;
+    height: 30%;
+    text-align: center;
+    align-items: center ;
+    margin:auto;
+    padding-top: 50px;
+    border-radius: 5%;
+
+}
+.wrapper{
+    padding-top: 40px;
+    height: 500px;
+    color: black;
+    text-align: center;
+    align-items: center ;
+
+}
+.header1 h2, h4{
+    color:rgb(11, 0, 49);
+}
+div h4{
+    color:rgb(11, 0, 49);;
+}
+.cont1{
+    margin-top: 10px;
+}
+.reg_field{
+    margin-top: 50px;
+}
+.success_button{
+    margin-top: 30px;
+    z-index: 100;
+}
+
+#availBal {
+    text-align: left;
+    padding-left: 2%;
+}
