@@ -1,5 +1,6 @@
 package uk.co.asepstrath.bank.controllers;
 
+import io.jooby.ModelAndView;
 import io.jooby.StatusCode;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
@@ -25,6 +26,14 @@ public class Accounts {
         dataSource = ds;
         logger = log;
     }
+    @GET
+    public ModelAndView login() {
+        Map<String, Object> model = new HashMap<>();
+        model.put("name", "luke");
+
+        return new ModelAndView("login.hbs",model);
+    }
+
     @GET("/accounts")
     public String sayHi() {
         String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
@@ -51,18 +60,18 @@ public class Accounts {
     }
 
     @GET("/details")
-    public String printAccountDetails(@QueryParam String id){
-        if(id == null) return "no id!";
-        try(Connection connection = dataSource.getConnection()){
+    public String printAccountDetails(@QueryParam String id) {
+        if (id == null) return "no id!";
+        try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
-            ResultSet set = statement.executeQuery("SELECT * FROM `AccountList` Where `AccountId` = '"+id+"'");
+            ResultSet set = statement.executeQuery("SELECT * FROM `AccountList` Where `AccountId` = '" + id + "'");
             set.next();
 
             //change this
             return set.getString("customerName");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             // If something does go wrong this will log the stack trace
-            logger.error("Database Error Occurred",e);
+            logger.error("Database Error Occurred", e);
             // And return a HTTP 500 error to the requester
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
         }
