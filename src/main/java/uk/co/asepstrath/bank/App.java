@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class App extends Jooby {
 
@@ -62,49 +63,79 @@ public class App extends Jooby {
             java.util.Date currentDate = new java.util.Date();
             Date sqlDate = new Date(currentDate.getTime());
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate("CREATE TABLE IF NOT EXSITS `Customer` (\n"
-                    + "`name` varchar(255) NOT NULL \n"
-                    + "`username` varchar(255) PRIMARY KEY \n" //two users cannot have same username, however they could possibly have same accNo - only unique identifier when paired with sort code
-                    + "`passcode` varchar(255) NOT NULL \n"
-                    + "`dob` date NOT NULL,\n"
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Customer`"
+                    + "(`name` varchar(255) NOT NULL,"
+                    + "`username` varchar(255) PRIMARY KEY," //two users cannot have same username, however they could possibly have same accNo - only unique identifier when paired with sort code
+                    + "`password` varchar(255) NOT NULL,"
+                    + "`dob` date"
                     + ")");
 
 
-            stmt.executeUpdate("CREATE TABLE IF NOT EXSITS `Account` (\n"
-                    + "`sortCode` integer NOT NULL, \n"
-                    + "`accNum` integer NOT NULL, \n"
-                    + "`AccountType` varchar(45) NOT NULL \n"
-                    + "`balance` integer NOT NULL \n"
-                    + "`openDate` date NOT NULL, \n"
-                    + "`cardNumber` integer NOT NULL"
-                    + "`username` varchar(255) NOT NULL \n"
-                    + "PRIMARY KEY (`accountNo`, `sortCode`)," //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `AccountList` "
+                    + "(`AccountId` varchar(50) NOT NULL,"
+                    + "`customerName` varchar(100),"
+                    + "`AccountType` varchar(45),"
+                    + "`startingbalance` double,"
+                    + "`RoundUpEnabled` integer,"
+                    + "PRIMARY KEY (`AccountId`)" //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
+                    //+ "FOREIGN KEY (`customerName`) REFERENCES `Customer`(`customerName`)"
+                    + ")");
+
+
+
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Account` ("
+                    + "`sortCode` integer NOT NULL,"
+                    + "`accNum` integer NOT NULL,"
+                    + "`AccountType` varchar(45) NOT NULL,"
+                    + "`balance` integer NOT NULL,"
+                    + "`openDate` date NOT NULL,"
+                    + "`cardNumber` integer NOT NULL,"
+                    + "`username` varchar(255) NOT NULL,"
+                    + "PRIMARY KEY (`accNum`, `sortCode`)," //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
                     + "FOREIGN KEY (`username`) REFERENCES `Customer`(`username`)"
                     + ")");
 
-            stmt.executeUpdate("CREATE TABLE IF NOT EXSITS `Transaction` (\n"
-                    + "`accNum` integer NOT NULL, \n"
-                    + "`sortCode` integer NOT NULL, \n"
-                    + "`transactionType` varchar(45) \n"
-                    + "`amount` integer NOT NULL \n"
-                    + "`transactionDate` date NOT NULL,\n"
-                    + "`username` varchar(255) NOT NULL \n"
-                    + "`transactionID` integer PRIMARY KEY \n" //needed to uniquley identify the transaction as users can have many
+
+            //populates Account database
+            Manager man = new Manager();
+            ArrayList<Account> accounts = man.fetchAccountData();
+            for(Account account: accounts){
+                String insertAccount = ("INSERT INTO AccountList(AccountId,customerName,startingbalance,RoundUpEnabled)" + "VALUES (?,?,?,?)");
+                PreparedStatement statement = connection.prepareStatement(insertAccount);
+
+
+                statement.setString(1,account.getId());
+                statement.setString(2,account.getName());
+                statement.setDouble(3,account.getStartingBalance());
+                statement.setBoolean(4,account.getRoundUp());
+                statement.executeUpdate();
+            }
+
+
+            //prints accounts in Account database
+            ResultSet result = stmt.executeQuery("SELECT * FROM AccountList");
+            while(result.next()){
+                System.out.println(result.getString("AccountId") + " " + result.getString("customerName") + " " + result.getDouble("startingbalance") + " " + result.getBoolean("RoundUpEnabled"));
+            }
+
+
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
+                    + "(`transactionID` integer NOT NUll,"
+                    + "`Type` varchar(15) NOT NULL,"
+                    + "`amount` double NOT NULL,"
+                    + "`to` varchar(50),"
+                    + "`from` varchar(50),"
+                    + "PRIMARY KEY (`transactionID`)" //needed to uniquley identify the transaction as users can have many
                     + ")");
+
+
 
             //continue with next part - inserting data in 'Agile_Lab_Doc'
             String insert = ("INSERT INTO Customer(name, username, password, dob)"
                     + "VALUES (?,?,?,?)");
-            PreparedStatement prep = connection.prepareStatement(insert);
-            prep.setString(1, "Bob");
-            prep.setString(2,"bOB2024");
-            prep.setString(3, "OnlineBanking1234*");
-            prep.setDate(4, sqlDate); //dob is current date - fix
-            prep.executeUpdate();
-
-            Statement stmt2 = connection.createStatement();
             String sql = "SELECT * FROM Customer";
             ResultSet rs = stmt.executeQuery(sql);
+
 
             //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE
             //while (rs.next()) {
