@@ -1,5 +1,6 @@
 package uk.co.asepstrath.bank;
 
+import uk.co.asepstrath.bank.models.Account;
 import uk.co.asepstrath.bank.controllers.Accounts;
 import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;

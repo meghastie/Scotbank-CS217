@@ -8,7 +8,7 @@ import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.Unirest;
 
 import org.slf4j.Logger;
-import uk.co.asepstrath.bank.Account;
+import uk.co.asepstrath.bank.models.Account;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
