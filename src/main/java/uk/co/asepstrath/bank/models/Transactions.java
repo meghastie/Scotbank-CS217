@@ -1,6 +1,6 @@
 package uk.co.asepstrath.bank.models;
 
-public class Transaction {
+public class Transactions {
     private String time;
     private double amount;
     private String from;
@@ -8,7 +8,7 @@ public class Transaction {
     private String to;
     private String type;
 
-    public Transaction(String time, double amount, String from, String id, String to, String type){
+    public Transactions(String time, double amount, String from, String id, String to, String type){
         this.time = time;
         this.amount = amount;
         this.from = from;

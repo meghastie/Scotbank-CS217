@@ -2,21 +2,21 @@ package uk.co.asepstrath.bank;
 import static org.junit.jupiter.api.Assertions.*;
 
 import uk.co.asepstrath.bank.models.Account;
-import uk.co.asepstrath.bank.models.Transaction;
+import uk.co.asepstrath.bank.models.Transactions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class AccountTests {
     Account a;
-    Transaction t;
-    Transaction f;
+    Transactions t;
+    Transactions f;
 
     @BeforeEach
     public void setUp(){
         a = new Account("0", "kath", 0, false);
-        t = new Transaction("21/02/24",53.64,"mum","123456","kath", "donation");
-        f = new Transaction("21/02/24",66.89,"kath","123456","mum", "donation");
+        t = new Transactions("21/02/24",53.64,"mum","123456","kath", "donation");
+        f = new Transactions("21/02/24",66.89,"kath","123456","mum", "donation");
     }
     @Test
     public void transactionTo(){

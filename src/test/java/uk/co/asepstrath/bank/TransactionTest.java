@@ -1,15 +1,15 @@
 package uk.co.asepstrath.bank;
 
-import uk.co.asepstrath.bank.models.Transaction;
+import uk.co.asepstrath.bank.models.Transactions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TransactionTest {
-    Transaction t;
+    Transactions t;
     @BeforeEach
-    public void setup(){t = new Transaction("21/02/24",53.64,"mum","123456","kath", "donation");
+    public void setup(){t = new Transactions("21/02/24",53.64,"mum","123456","kath", "donation");
     }
     @Test
     void getTime() {
