@@ -44,7 +44,7 @@ public class Account {
         System.out.println(dec);
         return name + " - " + dec.toString();
     }
-    public void myTranaction(Transaction t){
+    public boolean myTranaction(Transaction t){
         if(t.getFrom().equals(name)){
             withdraw(t.getAmount());
             if(roundUpEnabled){
@@ -55,7 +55,10 @@ public class Account {
         }
         else {
             System.out.println("error with transaction");
+            return false;
         }
+        myTransactions.add(t);
+        return true;
     }
 
 
