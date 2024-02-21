@@ -1,4 +1,4 @@
-package uk.co.asepstrath.bank;
+package uk.co.asepstrath.bank.models;
 
 public class Business {
     private String id;
