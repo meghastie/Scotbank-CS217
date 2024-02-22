@@ -3,6 +3,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import io.jooby.test.JoobyTest;
 import uk.co.asepstrath.bank.models.Account;
 import org.junit.jupiter.api.Test;
+import uk.co.asepstrath.bank.services.HelperMethods;
+
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,8 +18,7 @@ public class IntegrationTest {
     @Test
 
     public void testFetchAccountDataIntegration() {
-        Manager manager = new Manager();
-        ArrayList<Account> accounts = manager.fetchAccountData();
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
 
         // Assert that the fetched accounts list is not empty
         assertFalse(accounts.isEmpty());
