@@ -3,18 +3,17 @@ package uk.co.asepstrath.bank.controllers;
 import io.jooby.StatusCode;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
+import io.jooby.annotation.PathParam;
 import io.jooby.annotation.QueryParam;
 import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.Unirest;
 
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.models.Account;
+import uk.co.asepstrath.bank.services.HelperMethods;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 
 @Path("/bank")
@@ -26,39 +25,21 @@ public class Accounts {
         logger = log;
     }
     @GET("/accounts")
-    public String sayHi() {
-        String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
-        StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
-
-        ArrayList<Account> accounts = new ArrayList<>();
-
-        while(tokens.hasMoreTokens()){
-            tokens.nextToken();     //id
-            String id = tokens.nextToken();
-            tokens.nextToken();     //name
-            String name = tokens.nextToken();
-            tokens.nextToken();     //starting bal
-            String bal = tokens.nextToken();
-            tokens.nextToken();     //roundup
-            String roundup = tokens.nextToken();
-
-            accounts.add(new Account(id,name,Double.parseDouble(bal),Boolean.parseBoolean(roundup)));
-        }
-
-
+    public String sayHi(int option) {
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
         return accounts.toString();
-//
     }
 
-    @GET("/details")
-    public String printAccountDetails(@QueryParam String id){
-        if(id == null) return "no id!";
+    @GET("/details/{id}")
+    public String printAccountDetails(@PathParam String id){
         try(Connection connection = dataSource.getConnection()){
-            Statement statement = connection.createStatement();
-            ResultSet set = statement.executeQuery("SELECT * FROM `AccountList` Where `AccountId` = '"+id+"'");
-            set.next();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM `AccountList` WHERE `AccountId` = ?");
+            statement.setString(1,id);
+            ResultSet set = statement.executeQuery();
 
-            //change this
+            if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
+
+
             return set.getString("customerName");
         } catch (SQLException e){
             // If something does go wrong this will log the stack trace
