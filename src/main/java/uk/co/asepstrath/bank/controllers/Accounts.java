@@ -11,6 +11,7 @@ import kong.unirest.core.Unirest;
 
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.models.Account;
+import uk.co.asepstrath.bank.services.HelperMethods;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -34,25 +35,7 @@ public class Accounts {
 
     @GET("/accounts")
     public String sayHi() {
-        String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
-        StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
-
-        ArrayList<Account> accounts = new ArrayList<>();
-
-        while(tokens.hasMoreTokens()){
-            tokens.nextToken();     //id
-            String id = tokens.nextToken();
-            tokens.nextToken();     //name
-            String name = tokens.nextToken();
-            tokens.nextToken();     //starting bal
-            String bal = tokens.nextToken();
-            tokens.nextToken();     //roundup
-            String roundup = tokens.nextToken();
-
-            accounts.add(new Account(id,name,Double.parseDouble(bal),Boolean.parseBoolean(roundup)));
-        }
-
-
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
         return accounts.toString();
 //
     }
