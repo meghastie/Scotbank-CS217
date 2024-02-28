@@ -1,14 +1,14 @@
-package uk.co.asepstrath.bank;
+package uk.co.asepstrath.bank.services;
 
-import io.jooby.Jooby;
-import kong.unirest.core.*;
+import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.models.Account;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class Manager extends Jooby {
-    ArrayList<Account> fetchAccountData() {
+public class HelperMethods {
+
+    public static ArrayList<Account> getAccountList(){
         String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
         StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
 
@@ -28,13 +28,5 @@ public class Manager extends Jooby {
         }
 
         return accounts;
-    }
-
-    public static void main(String[] args) {
-        Manager man = new Manager();
-        ArrayList<Account> accounts = man.fetchAccountData();
-
-        System.out.println(accounts.toString());
-        System.out.println(accounts.size());
     }
 }
