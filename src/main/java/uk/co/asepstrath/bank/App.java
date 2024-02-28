@@ -1,5 +1,6 @@
 package uk.co.asepstrath.bank;
 
+import uk.co.asepstrath.bank.controllers.TransactionController;
 import uk.co.asepstrath.bank.models.Account;
 import uk.co.asepstrath.bank.controllers.Accounts;
 import io.jooby.Jooby;
@@ -7,6 +8,8 @@ import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.models.Transactions;
+import uk.co.asepstrath.bank.services.XmlParser;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -35,9 +38,11 @@ public class App extends Jooby {
          */
         DataSource ds = require(DataSource.class);
         Logger log = getLog();
-
+        XmlParser xmlParser = new XmlParser();
+        TransactionController transactionController = new TransactionController(ds, log, xmlParser);
 
         mvc(new Accounts(ds,log));
+        mvc(transactionController);
 
         /*
         Finally we register our application lifecycle methods
