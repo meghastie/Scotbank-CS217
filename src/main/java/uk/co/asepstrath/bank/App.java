@@ -1,5 +1,6 @@
 package uk.co.asepstrath.bank;
 
+import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.models.Account;
 import uk.co.asepstrath.bank.controllers.Accounts;
 import io.jooby.Jooby;
@@ -7,10 +8,12 @@ import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.services.HelperMethods;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class App extends Jooby {
 
@@ -98,8 +101,7 @@ public class App extends Jooby {
 
 
             //populates Account database
-            Manager man = new Manager();
-            ArrayList<Account> accounts = man.fetchAccountData();
+            ArrayList<Account> accounts = HelperMethods.getAccountList();
             for(Account account: accounts){
                 String insertAccount = ("INSERT INTO AccountList(AccountId,customerName,startingbalance,RoundUpEnabled)" + "VALUES (?,?,?,?)");
                 PreparedStatement statement = connection.prepareStatement(insertAccount);
@@ -114,6 +116,7 @@ public class App extends Jooby {
 
 
             //prints accounts in Account database
+
             ResultSet result = stmt.executeQuery("SELECT * FROM AccountList");
             while(result.next()){
                 System.out.println(result.getString("AccountId") + " " + result.getString("customerName") + " " + result.getDouble("startingbalance") + " " + result.getBoolean("RoundUpEnabled"));
