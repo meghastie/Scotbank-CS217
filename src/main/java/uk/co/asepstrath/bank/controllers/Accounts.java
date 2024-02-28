@@ -2,10 +2,7 @@ package uk.co.asepstrath.bank.controllers;
 
 import io.jooby.ModelAndView;
 import io.jooby.StatusCode;
-import io.jooby.annotation.GET;
-import io.jooby.annotation.Path;
-import io.jooby.annotation.PathParam;
-import io.jooby.annotation.QueryParam;
+import io.jooby.annotation.*;
 import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.Unirest;
 
@@ -31,6 +28,14 @@ public class Accounts {
 
         return new ModelAndView("login.hbs",model);
     }
+
+    /*@GET("/home")
+    public ModelAndView home() {
+        Map<String, Object> model = new HashMap<>();
+        model.put("name", "luke");
+
+        return new ModelAndView("home.hbs",model);
+    }*/
 
     @GET("/accounts")
     public String sayHi() {
@@ -73,6 +78,17 @@ public class Accounts {
             // And return a HTTP 500 error to the requester
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
         }
+    }
+
+    @POST("/home")
+    public ModelAndView transferToHome(String username, String password) {
+        Map<String, Object> model = new HashMap<>();
+
+
+
+        model.put("name", username);
+
+        return new ModelAndView("home.hbs",model);
     }
 
 }
