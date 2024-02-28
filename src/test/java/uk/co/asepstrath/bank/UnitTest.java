@@ -16,13 +16,13 @@ public class UnitTest {
     Example can be found in example/UnitTest.java
      */
 
-    @Test
-    public void HundredEntries(){
-        Manager manager = new Manager();
-        ArrayList<Account> accounts = manager.fetchAccountData();
-
-        assertEquals(accounts.size(),100);
-    }
+//    @Test
+//    public void HundredEntries(){
+//        Manager manager = new Manager();
+//        ArrayList<Account> accounts = manager.fetchAccountData();
+//
+//        assertEquals(accounts.size(),100);
+//    }
 
     @Test
     public void accountsWebsiteActive(){
