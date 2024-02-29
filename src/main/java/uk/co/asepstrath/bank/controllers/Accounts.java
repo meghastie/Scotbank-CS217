@@ -40,8 +40,50 @@ public class Accounts {
 
     @GET("/accounts")
     public String sayHi() {
-        ArrayList<Account> accounts = HelperMethods.getAccountList();
+        String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
+        StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
+
+        ArrayList<Account> accounts = new ArrayList<>();
+
+        while(tokens.hasMoreTokens()){
+            tokens.nextToken();     //id
+            String id = tokens.nextToken();
+            tokens.nextToken();     //name
+            String name = tokens.nextToken();
+            tokens.nextToken();     //starting bal
+            String bal = tokens.nextToken();
+            tokens.nextToken();     //roundup
+            String roundup = tokens.nextToken();
+
+            accounts.add(new Account(id,name,Double.parseDouble(bal),Boolean.parseBoolean(roundup)));
+        }
+
+
         return accounts.toString();
+//
+    }
+
+    public ArrayList<Account> allAccounts() {
+        String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
+        StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
+
+        ArrayList<Account> accounts = new ArrayList<>();
+
+        while(tokens.hasMoreTokens()){
+            tokens.nextToken();     //id
+            String id = tokens.nextToken();
+            tokens.nextToken();     //name
+            String name = tokens.nextToken();
+            tokens.nextToken();     //starting bal
+            String bal = tokens.nextToken();
+            tokens.nextToken();     //roundup
+            String roundup = tokens.nextToken();
+
+            accounts.add(new Account(id,name,Double.parseDouble(bal),Boolean.parseBoolean(roundup)));
+        }
+
+
+        return accounts;
 //
     }
 
@@ -66,10 +108,17 @@ public class Accounts {
     @POST("/home")
     public ModelAndView transferToHome(String username, String password) {
         Map<String, Object> model = new HashMap<>();
-
-
-
+        double bal = 0;
+        ArrayList<Account> accounts;
+        accounts = allAccounts();
         model.put("name", username);
+
+        for(int i=0; i< accounts.size(); i++) {
+            if(username.equals(accounts.get(i).getUsername())) {
+                bal+= accounts.get(i).getBalance();
+            }
+        }
+        model.put("bal", bal);
 
         return new ModelAndView("home.hbs",model);
     }
