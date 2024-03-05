@@ -109,13 +109,26 @@ public class Accounts {
     public ModelAndView transferToHome(String username, String password) {
         Map<String, Object> model = new HashMap<>();
         double bal = 0;
+        /*try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("SELECT balance FROM `AccountList`, `Account` WHERE `customerName` = username AND `AccountList.username` = `Account.username`;?");
+            statement.setString(1,username);
+            ResultSet set = statement.executeQuery();
+
+        } catch (SQLException e) {
+            // If something does go wrong this will log the stack trace
+            logger.error("Database Error Occurred", e);
+            // And return a HTTP 500 error to the requester
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
+        }*/
+
+
         ArrayList<Account> accounts;
         accounts = allAccounts();
         model.put("name", username);
 
-        for(int i=0; i< accounts.size(); i++) {
-            if(username.equals(accounts.get(i).getUsername())) {
-                bal+= accounts.get(i).getBalance();
+        for (Account account : accounts) {
+            if (username.equals(account.getUsername())) {
+                bal += account.getBalance();
             }
         }
         model.put("bal", bal);
