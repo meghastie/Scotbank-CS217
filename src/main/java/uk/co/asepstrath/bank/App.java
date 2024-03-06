@@ -69,12 +69,6 @@ public class App extends Jooby {
             java.util.Date currentDate = new java.util.Date();
             Date sqlDate = new Date(currentDate.getTime());
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Customer`"
-                    + "(`name` varchar(255) NOT NULL,"
-                    + "`username` varchar(255) PRIMARY KEY," //two users cannot have same username, however they could possibly have same accNo - only unique identifier when paired with sort code
-                    + "`password` varchar(255) NOT NULL,"
-                    + "`dob` date"
-                    + ")");
 
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `AccountList` "
@@ -83,6 +77,7 @@ public class App extends Jooby {
                     + "`AccountType` varchar(45),"
                     + "`startingbalance` double,"
                     + "`RoundUpEnabled` integer,"
+                    + "`RoundUpPot` double,"
                     + "PRIMARY KEY (`AccountId`)" //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
                     //+ "FOREIGN KEY (`customerName`) REFERENCES `Customer`(`customerName`)"
                     + ")");
@@ -103,9 +98,10 @@ public class App extends Jooby {
 
 
             //populates Account database
-            ArrayList<Account> accounts = HelperMethods.getAccountList();
+
+            ArrayList<Account> accounts = completeTransactions();
             for(Account account: accounts){
-                String insertAccount = ("INSERT INTO AccountList(AccountId,customerName,startingbalance,RoundUpEnabled)" + "VALUES (?,?,?,?)");
+                String insertAccount = ("INSERT INTO AccountList(AccountId,customerName,startingbalance,RoundUpEnabled,Pot)" + "VALUES (?,?,?,?,?)");
                 PreparedStatement statement = connection.prepareStatement(insertAccount);
 
 
@@ -113,6 +109,7 @@ public class App extends Jooby {
                 statement.setString(2,account.getName());
                 statement.setDouble(3,account.getStartingBalance());
                 statement.setBoolean(4,account.getRoundUp());
+                statement.setDouble(5,account.getPot());
                 statement.executeUpdate();
             }
 
@@ -135,29 +132,6 @@ public class App extends Jooby {
                     + ")");
 
 
-
-
-            //continue with next part - inserting data in 'Agile_Lab_Doc'
-            String insert = ("INSERT INTO Customer(name, username, password, dob)"
-                    + "VALUES (?,?,?,?)");
-            String sql = "SELECT * FROM Customer";
-            ResultSet rs = stmt.executeQuery(sql);
-
-
-            //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE
-            //while (rs.next()) {
-            //  int id = rs.getInt("id");
-            //String name = rs.getString("name");
-            //int age = rs.getInt("phone");
-            //String address = rs.getString("address");
-            //double salary = rs.getDouble("salary");
-            //java.sql.Date date = rs.getDate("dob");
-            //Employee employee = new Employee(id, name, age, address, salary);
-            //}
-            //rs.close();``
-
-            completeTransactions();
-
             connection.close(); //close to free up resources
         } catch (SQLException e) {
             log.error("Database Creation Error",e);
@@ -172,20 +146,18 @@ public class App extends Jooby {
 
     }
 
-    private void completeTransactions(){
+    private ArrayList<Account> completeTransactions(){
         XmlParser p = new XmlParser();
         ArrayList<Account> accountList = HelperMethods.getAccountList();
         ArrayList<Transactions> transactionList = p.ParserList();
-        System.out.println(transactionList.size());
-        Boolean done = false;
-
         for(Transactions transaction: transactionList){
-            done = false;
+            boolean finish = false;
             for(Account acc: accountList){
-                Boolean test = acc.myTranaction(transaction);
-                done = done || test;
+                    Boolean work = acc.myTranaction(transaction);
+                    finish = work || finish;
             }
-            System.out.println(done);
+            System.out.println(finish);
         }
+        return accountList;
     }
 }

@@ -55,7 +55,7 @@ public class Account {
         if(t.getFrom().equals(id)){
             if(roundUpEnabled){
                 BigDecimal addition = BigDecimal.valueOf(round(t.getAmount())-t.getAmount());
-                withdraw(t.getAmount()+(addition.doubleValue()));
+                    withdraw(t.getAmount()+(addition.doubleValue()));
                 pot = pot.add(addition);
             }
             else {
@@ -89,9 +89,9 @@ public class Account {
 
     public void withdraw(double money){
         dec = dec.subtract(BigDecimal.valueOf(money));
-        if(dec.doubleValue()<0){
+        /*if(dec.doubleValue()<0){
             throw new ArithmeticException();
-        }
+        }*/
     }
     public String getAccNum(){ return accNum; }
     public String getSortCode(){ return sortCode; }
