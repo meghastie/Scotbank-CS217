@@ -13,7 +13,7 @@ import java.util.List;
 public class XmlParser {
  public static String Parser() {
      try {
-         URL url = new URL("https://api.example.com/transactions"); // URL to your API endpoint
+         URL url = new URL("https://api.asep-strath.co.uk/api/transactions"); // URL to your API endpoint
 
          DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
          DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

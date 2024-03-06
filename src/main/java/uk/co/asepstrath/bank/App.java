@@ -116,12 +116,12 @@ public class App extends Jooby {
 
 
             //prints accounts in Account database
-
+            /*
             ResultSet result = stmt.executeQuery("SELECT * FROM AccountList");
             while(result.next()){
                 System.out.println(result.getString("AccountId") + " " + result.getString("customerName") + " " + result.getDouble("startingbalance") + " " + result.getBoolean("RoundUpEnabled"));
             }
-
+            */
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
                     + "(`transactionID` integer NOT NUll,"
