@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XmlParser {
- public static Transactions Parser() {
+ public static String Parser() {
      try {
          URL url = new URL("https://api.asep-strath.co.uk/api/transactions"); // URL to your API endpoint
 
@@ -48,7 +48,7 @@ public class XmlParser {
              System.out.println("Type: " + transaction.getType());
              System.out.println();
          }
-         return (Transactions) transactionsList;
+         return transactionsList.toString();
      } catch (Exception e) {
          e.printStackTrace();
      }
