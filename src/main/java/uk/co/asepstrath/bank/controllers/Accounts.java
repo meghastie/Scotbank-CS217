@@ -64,7 +64,7 @@ public class Accounts {
 
     @GET("/test/trans")
     public String getTransactions(){
-        return XmlParser.Parser();
+        return XmlParser.Parser().toString();
     }
 
 }
