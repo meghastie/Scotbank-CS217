@@ -15,6 +15,7 @@ import uk.co.asepstrath.bank.services.XmlParser;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class App extends Jooby {
@@ -134,14 +135,34 @@ public class App extends Jooby {
                     + "PRIMARY KEY (`transactionID`)" //needed to uniquley identify the transaction as users can have many
                     + ")");
 
+            //populates Transactions database
+            List<Transactions> transactions = XmlParser.Parser();
+            for(Transactions transaction: transactions){
+                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,to,from)" + "VALUES (?,?,?,?,?)");
+                PreparedStatement statement = connection.prepareStatement(insertAccount);
 
 
+                statement.setString(1,transaction.getID());
+                statement.setString(2,transaction.getType());
+                statement.setDouble(3,transaction.getAmount());
+                statement.setString(4,transaction.getTo());
+                statement.setString(5,transaction.getFrom());
+                statement.executeUpdate();
+            }
 
             //continue with next part - inserting data in 'Agile_Lab_Doc'
             String insert = ("INSERT INTO Customer(name, username, password, dob)"
                     + "VALUES (?,?,?,?)");
             String sql = "SELECT * FROM Customer";
             ResultSet rs = stmt.executeQuery(sql);
+
+            //prints accounts in Account database
+
+            ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
+            while(result.next()){
+                System.out.println(result.getString("transactionID") + " " + result.getString("Type") + " " + result.getBoolean("amount") + " " + result.getString("to") + " " + result.getString("from"));
+            }
+
 
 
             //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE

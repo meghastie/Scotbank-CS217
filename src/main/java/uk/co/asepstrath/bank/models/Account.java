@@ -31,17 +31,6 @@ public class Account {
         pot = BigDecimal.ZERO;
     }
 
-    public Account(String name, String acc, String sort, String card, String cv,  String user, String pass, int amount){
-        this.name = name;
-        setAccountNumber(acc);
-        setCardNumber(card);
-        setCVC(cv);
-        username = user;
-        password = pass;
-        dec = BigDecimal.valueOf(amount);
-
-    }
-
     public String getName(){ return name; }
 
     public String toString(){
