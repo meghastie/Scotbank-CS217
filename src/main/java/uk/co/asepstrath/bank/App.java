@@ -8,7 +8,9 @@ import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.models.Transactions;
 import uk.co.asepstrath.bank.services.HelperMethods;
+import uk.co.asepstrath.bank.services.XmlParser;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -134,6 +136,7 @@ public class App extends Jooby {
 
 
 
+
             //continue with next part - inserting data in 'Agile_Lab_Doc'
             String insert = ("INSERT INTO Customer(name, username, password, dob)"
                     + "VALUES (?,?,?,?)");
@@ -153,7 +156,7 @@ public class App extends Jooby {
             //}
             //rs.close();``
 
-
+            completeTransactions();
 
             connection.close(); //close to free up resources
         } catch (SQLException e) {
@@ -169,4 +172,20 @@ public class App extends Jooby {
 
     }
 
+    private void completeTransactions(){
+        XmlParser p = new XmlParser();
+        ArrayList<Account> accountList = HelperMethods.getAccountList();
+        ArrayList<Transactions> transactionList = p.ParserList();
+        System.out.println(transactionList.size());
+        Boolean done = false;
+
+        for(Transactions transaction: transactionList){
+            done = false;
+            for(Account acc: accountList){
+                Boolean test = acc.myTranaction(transaction);
+                done = done || test;
+            }
+            System.out.println(done);
+        }
+    }
 }

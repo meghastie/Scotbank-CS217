@@ -50,8 +50,9 @@ public class Account {
         return name + " - " + dec.toString();
     }
 
+    public void roundUpSwitch(){roundUpEnabled = !roundUpEnabled;}
     public boolean myTranaction(Transactions t){
-        if(t.getFrom().equals(name)){
+        if(t.getFrom().equals(id)){
             if(roundUpEnabled){
                 BigDecimal addition = BigDecimal.valueOf(round(t.getAmount())-t.getAmount());
                 withdraw(t.getAmount()+(addition.doubleValue()));
@@ -60,15 +61,17 @@ public class Account {
             else {
                 withdraw(t.getAmount());
             }
-        } else if (t.getTo().equals(name)) {
+        } else if (t.getTo().equals(id)) {
             deposit(t.getAmount());
         }
         else {
-            System.out.println("error with transaction");
             return false;
         }
         myTransactions.add(t);
         return true;
+    }
+    public double getPot(){
+        return pot.doubleValue();
     }
 
     public void releaseSavings(){
