@@ -177,7 +177,7 @@ public class App extends Jooby {
             //}
             //rs.close();``
 
-            completeTransactions();
+            //completeTransactions();
 
             connection.close(); //close to free up resources
         } catch (SQLException e) {
