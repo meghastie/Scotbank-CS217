@@ -9,12 +9,14 @@ import org.junit.jupiter.api.Test;
 
 public class AccountTests {
     Account a;
+    Account b;
     Transactions t;
     Transactions f;
 
     @BeforeEach
     public void setUp(){
         a = new Account("0", "kath", 0, false);
+        b = new Account("1", "mum", 0, true);
         t = new Transactions("21/02/24",53.64,"mum","123456","kath", "donation");
         f = new Transactions("21/02/24",66.89,"kath","123456","mum", "donation");
     }
@@ -28,6 +30,12 @@ public class AccountTests {
         a.deposit(100);
         a.myTranaction(f);
         assertEquals(a.getBalance(),(100.0-66.89));
+    }
+    @Test
+    public void roundupTest(){
+        b.deposit(100);
+        b.myTranaction(t);
+        assertEquals(b.getBalance(),46);
     }
     @Test
     public void createAccount(){
