@@ -7,13 +7,17 @@ import io.jooby.annotation.Path;
 import io.jooby.annotation.PathParam;
 import io.jooby.annotation.QueryParam;
 import io.jooby.exception.StatusCodeException;
+import kong.unirest.core.ObjectMapper;
 import kong.unirest.core.Unirest;
+import com.fasterxml.jackson.annotation.*;
 
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.models.Account;
 import uk.co.asepstrath.bank.services.HelperMethods;
+import uk.co.asepstrath.bank.services.XmlParser;
 
 import javax.sql.DataSource;
+import javax.xml.crypto.dsig.XMLObject;
 import java.sql.*;
 import java.util.*;
 
@@ -55,6 +59,11 @@ public class Accounts {
             // And return a HTTP 500 error to the requester
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
         }
+    }
+
+    @GET("/test/trans")
+    public String getTransactions(){
+        return XmlParser.Parser();
     }
 
 }

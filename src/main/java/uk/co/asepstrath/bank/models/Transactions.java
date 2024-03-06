@@ -36,5 +36,13 @@ public class Transactions {
         return type;
     }
 
-
+    @Override
+    public String toString() {
+        return ("Time: " + getTime() +
+        "\nAmount: " + getAmount() +
+        "\nFrom: " + getFrom() +
+        "\nID: " + getID() +
+        "\nTo: " + getTo() +
+        "\nType: " + getType() + "\n\n\n");
+    }
 }

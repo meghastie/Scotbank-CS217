@@ -48,9 +48,9 @@ public class TransactionController {
     }
 
     @GET("/transactions")
-    public String showAccount() {
-        return parser.Parser().getFrom().toString();
-    }
+        public String showAccount() {
+            return xmlParser.Parser();
+        }
 
 
 }
