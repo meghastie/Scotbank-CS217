@@ -178,7 +178,7 @@ public class App extends Jooby {
             //}
             //rs.close();``
 
-
+            //completeTransactions();
 
             connection.close(); //close to free up resources
         } catch (SQLException e) {
@@ -194,4 +194,20 @@ public class App extends Jooby {
 
     }
 
+    private void completeTransactions(){
+        XmlParser p = new XmlParser();
+        ArrayList<Account> accountList = HelperMethods.getAccountList();
+        ArrayList<Transactions> transactionList = p.ParserList();
+        System.out.println(transactionList.size());
+        Boolean done = false;
+
+        for(Transactions transaction: transactionList){
+            done = false;
+            for(Account acc: accountList){
+                Boolean test = acc.myTranaction(transaction);
+                done = done || test;
+            }
+            System.out.println(done);
+        }
+    }
 }
