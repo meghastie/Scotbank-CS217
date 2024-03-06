@@ -12,17 +12,37 @@ import javax.sql.DataSource;
 @Path("/bank")
 public class TransactionController {
 
+//    private final DataSource dataSource;
+//    private final Logger logger;
+//    private final XmlParser parser;
+//    private List<Transactions> transactions;
 
-        private final DataSource dataSource;
-        private final Logger logger;
-    private final XmlParser xmlParser;
-    private Transactions transactions;
+
+//    public TransactionController(DataSource dataSource, Logger logger, XmlParser parser ) {
+//        this.dataSource = dataSource;
+//        this.logger = logger;
+//        this.parser = parser;
+//
+//
+//    }
+//
+//    @GET("/transactions")
+//        public String showAccount() {
+//        String test = parser.Parser();
+//        String test1 = transactions.getFrom();
+//        return  test1;
+//
+//        }
 
 
-    public TransactionController(DataSource dataSource, Logger logger, XmlParser  xmlParser ) {
+    private final DataSource dataSource;
+    private final Logger logger;
+    private final XmlParser parser;
+
+    public TransactionController(DataSource dataSource, Logger logger, XmlParser parser) {
         this.dataSource = dataSource;
         this.logger = logger;
-        this.xmlParser = xmlParser;
+        this.parser = parser;
 
 
     }

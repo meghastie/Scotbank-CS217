@@ -41,7 +41,6 @@ public class Accounts {
     public String sayHi() {
         ArrayList<Account> accounts = HelperMethods.getAccountList();
         return accounts.toString();
-//
     }
 
     @GET("/details/{id}")
