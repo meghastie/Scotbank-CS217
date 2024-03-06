@@ -29,9 +29,7 @@ public class TransactionController {
 
     @GET("/transactions")
         public String showAccount() {
-        xmlParser.Parser();
-        return transactions.getID();
-
+            return xmlParser.Parser();
         }
 
 

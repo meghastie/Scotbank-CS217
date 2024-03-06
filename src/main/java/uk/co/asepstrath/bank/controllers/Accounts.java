@@ -2,15 +2,22 @@ package uk.co.asepstrath.bank.controllers;
 
 import io.jooby.ModelAndView;
 import io.jooby.StatusCode;
-import io.jooby.annotation.*;
+import io.jooby.annotation.GET;
+import io.jooby.annotation.Path;
+import io.jooby.annotation.PathParam;
+import io.jooby.annotation.QueryParam;
 import io.jooby.exception.StatusCodeException;
+import kong.unirest.core.ObjectMapper;
 import kong.unirest.core.Unirest;
+import com.fasterxml.jackson.annotation.*;
 
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.models.Account;
 import uk.co.asepstrath.bank.services.HelperMethods;
+import uk.co.asepstrath.bank.services.XmlParser;
 
 import javax.sql.DataSource;
+import javax.xml.crypto.dsig.XMLObject;
 import java.sql.*;
 import java.util.*;
 
@@ -30,60 +37,10 @@ public class Accounts {
         return new ModelAndView("login.hbs",model);
     }
 
-    /*@GET("/home")
-    public ModelAndView home() {
-        Map<String, Object> model = new HashMap<>();
-        model.put("name", "luke");
-
-        return new ModelAndView("home.hbs",model);
-    }*/
-
     @GET("/accounts")
     public String sayHi() {
-        String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
-        StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
-
-        ArrayList<Account> accounts = new ArrayList<>();
-
-        while(tokens.hasMoreTokens()){
-            tokens.nextToken();     //id
-            String id = tokens.nextToken();
-            tokens.nextToken();     //name
-            String name = tokens.nextToken();
-            tokens.nextToken();     //starting bal
-            String bal = tokens.nextToken();
-            tokens.nextToken();     //roundup
-            String roundup = tokens.nextToken();
-
-            accounts.add(new Account(id,name,Double.parseDouble(bal),Boolean.parseBoolean(roundup)));
-        }
-
-
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
         return accounts.toString();
-//
-    }
-
-    public ArrayList<Account> allAccounts() {
-        String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
-        StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
-
-        ArrayList<Account> accounts = new ArrayList<>();
-
-        while(tokens.hasMoreTokens()){
-            tokens.nextToken();     //id
-            String id = tokens.nextToken();
-            tokens.nextToken();     //name
-            String name = tokens.nextToken();
-            tokens.nextToken();     //starting bal
-            String bal = tokens.nextToken();
-            tokens.nextToken();     //roundup
-            String roundup = tokens.nextToken();
-
-            accounts.add(new Account(id,name,Double.parseDouble(bal),Boolean.parseBoolean(roundup)));
-        }
-
-
-        return accounts;
 //
     }
 
@@ -134,6 +91,11 @@ public class Accounts {
         model.put("bal", bal);
 
         return new ModelAndView("home.hbs",model);
+    }
+
+    @GET("/test/trans")
+    public String getTransactions(){
+        return XmlParser.Parser();
     }
 
 }
