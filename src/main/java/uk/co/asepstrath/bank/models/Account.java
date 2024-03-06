@@ -3,6 +3,8 @@ package uk.co.asepstrath.bank.models;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import static java.lang.Math.round;
+
 public class Account {
 
     private BigDecimal dec;
@@ -17,6 +19,7 @@ public class Account {
     private boolean roundUpEnabled;
     private double startingBalance;
     private ArrayList<Transactions> myTransactions;
+    private BigDecimal pot;
 
     public Account(String id, String name, double balance, boolean round) {
         this.id = id;
@@ -25,6 +28,7 @@ public class Account {
         dec = BigDecimal.valueOf(balance);
         roundUpEnabled = round;
         myTransactions = new ArrayList<>();
+        pot = BigDecimal.ZERO;
     }
 
     public Account(String name, String acc, String sort, String card, String cv,  String user, String pass, int amount){
@@ -35,6 +39,7 @@ public class Account {
         username = user;
         password = pass;
         dec = BigDecimal.valueOf(amount);
+
     }
 
     public String getName(){ return name; }
@@ -44,11 +49,16 @@ public class Account {
         System.out.println(dec);
         return name + " - " + dec.toString();
     }
+
     public boolean myTranaction(Transactions t){
         if(t.getFrom().equals(name)){
-            withdraw(t.getAmount());
             if(roundUpEnabled){
-                //do round up
+                BigDecimal addition = BigDecimal.valueOf(round(t.getAmount())-t.getAmount());
+                withdraw(t.getAmount()+(addition.doubleValue()));
+                pot = pot.add(addition);
+            }
+            else {
+                withdraw(t.getAmount());
             }
         } else if (t.getTo().equals(name)) {
             deposit(t.getAmount());
@@ -61,6 +71,10 @@ public class Account {
         return true;
     }
 
+    public void releaseSavings(){
+        dec = dec.add(pot);
+        pot = BigDecimal.ZERO;
+    }
 
     public void deposit(double amount){
         dec = dec.add(BigDecimal.valueOf(amount));
@@ -130,6 +144,7 @@ public class Account {
             System.out.println("Wrong password");
         }
     }
+
 
 }
 
