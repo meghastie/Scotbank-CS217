@@ -12,5 +12,4 @@ class XmlParserTest {
         XmlParser p = new XmlParser();
         p.Parser();
     }
-    @Test
 }
