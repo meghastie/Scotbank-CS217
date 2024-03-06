@@ -127,7 +127,7 @@ public class App extends Jooby {
             */
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
-                    + "(`transactionID` integer NOT NUll,"
+                    + "(`transactionID` varchar(50) NOT NUll,"
                     + "`Type` varchar(15) NOT NULL,"
                     + "`amount` double NOT NULL,"
                     + "`to` varchar(50),"
@@ -138,7 +138,7 @@ public class App extends Jooby {
             //populates Transactions database
             List<Transactions> transactions = XmlParser.Parser();
             for(Transactions transaction: transactions){
-                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,to,from)" + "VALUES (?,?,?,?,?)");
+                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,`to`,`from`)" + "VALUES (?,?,?,?,?)");
                 PreparedStatement statement = connection.prepareStatement(insertAccount);
 
 
@@ -156,15 +156,16 @@ public class App extends Jooby {
             String sql = "SELECT * FROM Customer";
             ResultSet rs = stmt.executeQuery(sql);
 
-            //prints accounts in Account database
+            //prints transaction
 
+            /*
             ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
             while(result.next()){
                 System.out.println(result.getString("transactionID") + " " + result.getString("Type") + " " + result.getBoolean("amount") + " " + result.getString("to") + " " + result.getString("from"));
             }
+            */
 
-
-
+            System.out.println("BALANCE CHECKKKKK: " + HelperMethods.getCurrentBalance("3ff9324c-a3d6-43bb-83fb-8d5400001da5",ds));
             //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE
             //while (rs.next()) {
             //  int id = rs.getInt("id");
