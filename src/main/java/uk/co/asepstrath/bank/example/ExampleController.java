@@ -26,6 +26,8 @@ import java.util.Random;
     The @Path Annotation will tell Jooby what /path this Controller can respond to,
     in this case the controller will respond to requests from <host>/example
  */
+
+/*
 @Path("/example")
 public class ExampleController {
 
@@ -35,16 +37,20 @@ public class ExampleController {
     /*
     This constructor can take in any dependencies the controller may need to respond to a request
      */
+
+/*
     public ExampleController(DataSource ds, Logger log) {
         dataSource = ds;
         logger = log;
     }
+    *\
 
+ */
     /*
     This is the simplest action a controller can perform
     The @GET annotation denotes that this function should be invoked when a GET HTTP request is sent to <host>/example
     The returned string will then be sent to the requester
-     */
+
     @GET
     public String welcome() {
         return "Welcome to Jooby!";
@@ -54,14 +60,18 @@ public class ExampleController {
     This @Get annotation takes an optional path parameter which denotes the function should be invoked on GET <host>/example/hello
     Note that this function makes it's own request to another API (http://faker.hook.io/) and returns the response
      */
+    /*
     @GET("/hello")
     public String sayHi() {
         return "Hello " + Unirest.get("http://faker.hook.io/").asString().getBody();
     }
+  */
 
     /*
     This request makes a call to the passed in data source (The Database) which has been set up in App.java
      */
+
+    /*
     @GET("/welcome")
     public String welcomeFromDB() {
         String welcomeMessageKey = "WelcomeMessage";
@@ -85,6 +95,8 @@ public class ExampleController {
         }
     }
 
+    */
+
     /*
     The dice endpoint displays two features of the Jooby framework, Parameters and Templates
 
@@ -98,6 +110,8 @@ public class ExampleController {
     We have set the Jooby framework up to use the Handlebars templating system which you can read more on here:
     https://handlebarsjs.com/guide/
      */
+
+    /*
     @GET("/dice")
     public ModelAndView dice(@QueryParam String name) {
 
@@ -121,8 +135,11 @@ public class ExampleController {
     The @POST annotation registers this function as a HTTP POST handler.
     It will look at the body of the POST request and try to deserialise into a MyMessage object
      */
+
+    /*
     @POST
     public String post(MyMessage message) {
         return "You successfully POSTed: "+message.Message+ " To: "+message.Recipient;
     }
 }
+*/
