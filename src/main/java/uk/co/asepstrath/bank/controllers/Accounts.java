@@ -8,6 +8,7 @@ import kong.unirest.core.Unirest;
 
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.models.Account;
+import uk.co.asepstrath.bank.models.Transactions;
 import uk.co.asepstrath.bank.services.HelperMethods;
 
 import javax.sql.DataSource;
@@ -18,16 +19,20 @@ import java.util.*;
 public class Accounts {
     private final DataSource dataSource;
     private final Logger logger;
-    public Accounts(DataSource ds, Logger log){
+
+    public Accounts(DataSource ds, Logger log) {
         dataSource = ds;
         logger = log;
     }
+
     @GET
     public ModelAndView login() {
         Map<String, Object> model = new HashMap<>();
         model.put("name", "luke");
 
-        return new ModelAndView("login.hbs",model);
+        return new ModelAndView("login.hbs", model);
+
+
     }
 
     /*@GET("/home")
@@ -41,11 +46,11 @@ public class Accounts {
     @GET("/accounts")
     public String sayHi() {
         String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
-        StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
+        StringTokenizer tokens = new StringTokenizer(response, "[]{},:\"");
 
         ArrayList<Account> accounts = new ArrayList<>();
 
-        while(tokens.hasMoreTokens()){
+        while (tokens.hasMoreTokens()) {
             tokens.nextToken();     //id
             String id = tokens.nextToken();
             tokens.nextToken();     //name
@@ -55,7 +60,7 @@ public class Accounts {
             tokens.nextToken();     //roundup
             String roundup = tokens.nextToken();
 
-            accounts.add(new Account(id,name,Double.parseDouble(bal),Boolean.parseBoolean(roundup)));
+            accounts.add(new Account(id, name, Double.parseDouble(bal), Boolean.parseBoolean(roundup)));
         }
 
 
@@ -65,11 +70,11 @@ public class Accounts {
 
     public ArrayList<Account> allAccounts() {
         String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
-        StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
+        StringTokenizer tokens = new StringTokenizer(response, "[]{},:\"");
 
         ArrayList<Account> accounts = new ArrayList<>();
 
-        while(tokens.hasMoreTokens()){
+        while (tokens.hasMoreTokens()) {
             tokens.nextToken();     //id
             String id = tokens.nextToken();
             tokens.nextToken();     //name
@@ -79,7 +84,7 @@ public class Accounts {
             tokens.nextToken();     //roundup
             String roundup = tokens.nextToken();
 
-            accounts.add(new Account(id,name,Double.parseDouble(bal),Boolean.parseBoolean(roundup)));
+            accounts.add(new Account(id, name, Double.parseDouble(bal), Boolean.parseBoolean(roundup)));
         }
 
 
@@ -88,10 +93,10 @@ public class Accounts {
     }
 
     @GET("/details/{id}")
-    public String printAccountDetails(@PathParam String id){
-        try(Connection connection = dataSource.getConnection()){
+    public String printAccountDetails(@PathParam String id) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM `AccountList` WHERE `AccountId` = ?");
-            statement.setString(1,id);
+            statement.setString(1, id);
             ResultSet set = statement.executeQuery();
 
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
@@ -133,7 +138,28 @@ public class Accounts {
         }
         model.put("bal", bal);
 
-        return new ModelAndView("home.hbs",model);
+        return new ModelAndView("home.hbs", model);
     }
+
+    @POST("/handleButtonClick")
+    public String handleButtonClick(@QueryParam String username) {
+        System.out.println("Received username: " + username); //test
+        if (username != null && !username.isEmpty()) {
+            ArrayList<Account> accounts = allAccounts();
+            for (Account acc : accounts) {
+                System.out.println("Checking account: " + acc.getUsername());
+                if (username.equals(acc.getUsername())) {
+                    acc.roundUpSwitch();
+                    if(acc.isRoundUpEnabled()) {
+                        return "Roundup is now ON";
+                    } else {
+                        return "Roundup is now OFF";
+                    }
+                }
+            }
+        }
+        return "account not found";
+    }
+
 
 }

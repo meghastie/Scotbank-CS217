@@ -63,6 +63,13 @@ public class Account {
         return pot.doubleValue();
     }
 
+    public boolean isRoundUpEnabled() {
+        if (roundUpEnabled) {
+            return true;
+        }
+        return false;
+    }
+
     public void releaseSavings(){
         dec = dec.add(pot);
         pot = BigDecimal.ZERO;
