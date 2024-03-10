@@ -20,6 +20,8 @@ public class Account {
     private double startingBalance;
     private ArrayList<Transactions> myTransactions;
     private BigDecimal pot;
+    private double[] incomeData;
+    private double[] spendingData;
 
     public Account(String id, String name, double balance, boolean round) {
         this.id = id;
@@ -70,6 +72,7 @@ public class Account {
 
     public void deposit(double amount){
         dec = dec.add(BigDecimal.valueOf(amount));
+        monthlyIncome(amount);
     }
 
     public double getBalance() {
@@ -81,6 +84,7 @@ public class Account {
         if(dec.doubleValue()<0){
             throw new ArithmeticException();
         }
+        monthlyOutgoing(money);
     }
     public String getAccNum(){ return accNum; }
     public String getSortCode(){ return sortCode; }
@@ -137,6 +141,27 @@ public class Account {
         }
     }
 
+    public double[] monthlyIncome(double amount) {
+        if (incomeData == null) {
+            incomeData = new double[12];
+        }
+        // january is 0, feb is 1 etc
+        int currentMonth = java.time.MonthDay.now().getMonthValue() - 1;
+        incomeData[currentMonth] += amount;
+        return incomeData;
+    }
 
+    public double[] monthlyOutgoing(double amount) {
+        if (spendingData == null) {
+            spendingData = new double[12];
+        }
+
+        int currentMonth = java.time.MonthDay.now().getMonthValue() - 1;
+        spendingData[currentMonth] += amount;
+        return spendingData;
+    }
 }
+
+
+
 
