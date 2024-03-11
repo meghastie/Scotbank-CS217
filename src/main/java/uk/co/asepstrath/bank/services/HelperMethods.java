@@ -17,8 +17,11 @@ import java.util.StringTokenizer;
 
 public class HelperMethods {
 
+    public static String getStringFromApi(String url){
+        return Unirest.get(url).asString().getBody();
+    }
     public static ArrayList<Account> getAccountList(){
-        String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
+        String response = getStringFromApi("https://api.asep-strath.co.uk/api/accounts");
         StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
 
         ArrayList<Account> accounts = new ArrayList<>();
@@ -40,7 +43,7 @@ public class HelperMethods {
     }
 
     public static double getCurrentBalance(String id,DataSource ds){
-        double balance = -1.0;
+        double balance = -9999.0;
         try(Connection connection = ds.getConnection()){
             PreparedStatement stmt = connection.prepareStatement("SELECT SUM(`amount`) AS `total` FROM `Transaction` WHERE `to` = ?");
             stmt.setString(1,id);

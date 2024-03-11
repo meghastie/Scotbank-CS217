@@ -1,6 +1,5 @@
 package uk.co.asepstrath.bank;
 
-import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.models.Account;
 import uk.co.asepstrath.bank.controllers.Accounts;
 import io.jooby.Jooby;
@@ -16,7 +15,6 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class App extends Jooby {
 
@@ -135,6 +133,7 @@ public class App extends Jooby {
                     + "PRIMARY KEY (`transactionID`)" //needed to uniquley identify the transaction as users can have many
                     + ")");
 
+
             //populates Transactions database
             List<Transactions> transactions = XmlParser.Parser();
             for(Transactions transaction: transactions){
@@ -157,7 +156,7 @@ public class App extends Jooby {
             ResultSet rs = stmt.executeQuery(sql);
 
             //prints transaction
-
+            System.out.println("BALANCE CHECKKKKK: " + HelperMethods.getCurrentBalance("3ff9324c-a3d6-43bb-83fb-8d5400001da5",ds));
             /*
             ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
             while(result.next()){
@@ -191,11 +190,9 @@ public class App extends Jooby {
         System.out.println("Shutting Down...");
 
     }
-
     private void completeTransactions(){
-        XmlParser p = new XmlParser();
         ArrayList<Account> accountList = HelperMethods.getAccountList();
-        ArrayList<Transactions> transactionList = p.ParserList();
+        List<Transactions> transactionList = XmlParser.Parser();
         System.out.println(transactionList.size());
         Boolean done = false;
 
@@ -208,4 +205,5 @@ public class App extends Jooby {
             System.out.println(done);
         }
     }
+
 }
