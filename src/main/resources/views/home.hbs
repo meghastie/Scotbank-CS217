@@ -193,8 +193,8 @@
 
             var xhr = new XMLHttpRequest();
 
-            xhr.open('POST', '/bank/handleButtonClick', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.open("POST", "/bank/handleButtonClick");
+            xhr.setRequestHeader("Content-Type", "/bank/handleButtonClick; charset=UTF-8");
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -208,9 +208,10 @@
                 }
             }
 
-            console.log("username is" + nameValue);
+            console.log("username is " + nameValue);
 
-            var formDataString = 'name=' + encodeURIComponent(nameValue);
+            // var formDataString = encodeURIComponent(nameValue);
+        var formDataString = nameValue;
             xhr.send(formDataString);
 
     };

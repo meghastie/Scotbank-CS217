@@ -12,6 +12,8 @@ import uk.co.asepstrath.bank.models.Transactions;
 import uk.co.asepstrath.bank.services.HelperMethods;
 
 import javax.sql.DataSource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.*;
 import java.util.*;
 
@@ -143,6 +145,25 @@ public class Accounts {
 
     @POST("/handleButtonClick")
     public String handleButtonClick(@QueryParam String username) {
+//        if (postedData == null)
+//        {
+//            return null;
+//        }
+//
+//        String username = null;
+//
+//        try
+//        {
+//            username = URLDecoder.decode(postedData, "UTF-8");
+//        }
+//
+//        // This exception should never occur.
+//        catch (UnsupportedEncodingException e)
+//        {
+//            username = postedData;
+//        }
+
+
         System.out.println("Received username: " + username); //test
         if (username != null && !username.isEmpty()) {
             ArrayList<Account> accounts = allAccounts();
