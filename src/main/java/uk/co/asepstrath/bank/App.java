@@ -164,8 +164,6 @@ public class App extends Jooby {
                 System.out.println(result.getString("transactionID") + " " + result.getString("Type") + " " + result.getBoolean("amount") + " " + result.getString("to") + " " + result.getString("from"));
             }
             */
-
-            System.out.println("BALANCE CHECKKKKK: " + HelperMethods.getCurrentBalance("3ff9324c-a3d6-43bb-83fb-8d5400001da5",ds));
             //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE
             //while (rs.next()) {
             //  int id = rs.getInt("id");
