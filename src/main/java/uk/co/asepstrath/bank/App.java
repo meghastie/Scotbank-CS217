@@ -8,12 +8,16 @@ import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.models.Transactions;
 import uk.co.asepstrath.bank.services.HelperMethods;
+import uk.co.asepstrath.bank.services.XmlParser;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
+
 
 public class App extends Jooby {
 
@@ -124,13 +128,29 @@ public class App extends Jooby {
             */
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
-                    + "(`transactionID` integer NOT NUll,"
+                    + "(`transactionID` varchar(50) NOT NUll,"
                     + "`Type` varchar(15) NOT NULL,"
                     + "`amount` double NOT NULL,"
                     + "`to` varchar(50),"
                     + "`from` varchar(50),"
                     + "PRIMARY KEY (`transactionID`)" //needed to uniquley identify the transaction as users can have many
                     + ")");
+
+            //populates Transactions database
+            List<Transactions> transactions = XmlParser.Parser();
+            for(Transactions transaction: transactions){
+                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,`to`,`from`)" + "VALUES (?,?,?,?,?)");
+                PreparedStatement statement = connection.prepareStatement(insertAccount);
+
+
+                statement.setString(1,transaction.getID());
+                statement.setString(2,transaction.getType());
+                statement.setDouble(3,transaction.getAmount());
+                statement.setString(4,transaction.getTo());
+                statement.setString(5,transaction.getFrom());
+                statement.executeUpdate();
+            }
+
 
 
 

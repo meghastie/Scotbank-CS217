@@ -109,31 +109,53 @@ public class Accounts {
     public ModelAndView transferToHome(String username, String password) {
         Map<String, Object> model = new HashMap<>();
         double bal = 0;
-        /*try(Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("SELECT balance FROM `AccountList`, `Account` WHERE `customerName` = username AND `AccountList.username` = `Account.username`;?");
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
             statement.setString(1,username);
             ResultSet set = statement.executeQuery();
+            if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
+            String id = set.getString("AccountId");
+            //bal = set.getDouble("startingbalance");
+            bal = getCurrentBalance(id, dataSource);
 
         } catch (SQLException e) {
             // If something does go wrong this will log the stack trace
             logger.error("Database Error Occurred", e);
             // And return a HTTP 500 error to the requester
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
-        }*/
-
-
-        ArrayList<Account> accounts;
-        accounts = allAccounts();
-        model.put("name", username);
-
-        for (Account account : accounts) {
-            if (username.equals(account.getUsername())) {
-                bal += account.getBalance();
-            }
         }
+
+        model.put("name", username);
         model.put("bal", bal);
 
         return new ModelAndView("home.hbs",model);
     }
 
+
+    public static double getCurrentBalance(String id,DataSource ds){
+        double balance = -1.0;
+        try(Connection connection = ds.getConnection()){
+            PreparedStatement stmt = connection.prepareStatement("SELECT SUM(`amount`) AS `total` FROM `Transaction` WHERE `to` = ?");
+            stmt.setString(1,id);
+
+
+            ResultSet totalTo = stmt.executeQuery();
+
+            stmt = connection.prepareStatement("SELECT SUM(amount) FROM `Transaction` WHERE `from` = ?");
+            stmt.setString(1,id);
+            ResultSet totalFrom = stmt.executeQuery();
+
+            stmt = connection.prepareStatement("SELECT `startingbalance` FROM `AccountList` WHERE `AccountId` = ?");
+            stmt.setString(1,id);
+            ResultSet startingBal = stmt.executeQuery();
+
+            if (!totalTo.next() || !totalFrom.next() || !startingBal.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Something doesn't work");
+
+            balance =  startingBal.getDouble(1) + (totalTo.getDouble(1) - totalFrom.getDouble(1));
+            return balance;
+        }catch(Exception e){
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
+        }
+    }
 }
+
