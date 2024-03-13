@@ -60,7 +60,8 @@ public class HelperMethods {
             if (!totalTo.next() || !totalFrom.next() || !startingBal.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Something doesn't work");
 
             balance =  BigDecimal.valueOf(startingBal.getDouble(1)).add(BigDecimal.valueOf(totalTo.getDouble(1))).subtract(BigDecimal.valueOf(totalFrom.getDouble(1))).doubleValue();
-            System.out.println(balance);
+
+            stmt.close();
             return balance;
         }catch(Exception e){
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");

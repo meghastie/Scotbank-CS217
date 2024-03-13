@@ -59,6 +59,7 @@ public class Accounts {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM `AccountList` WHERE `AccountId` = ?");
             statement.setString(1, id);
             ResultSet set = statement.executeQuery();
+            statement.close();
 
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
 

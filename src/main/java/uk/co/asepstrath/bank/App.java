@@ -138,18 +138,20 @@ public class App extends Jooby {
 
             //populates Transactions database
             List<Transactions> transactions = XmlParser.Parser();
-            for(Transactions transaction: transactions){
+            PreparedStatement statement = null;
+            for(Transactions transaction: transactions) {
                 String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,`to`,`from`)" + "VALUES (?,?,?,?,?)");
-                PreparedStatement statement = connection.prepareStatement(insertAccount);
+                statement = connection.prepareStatement(insertAccount);
 
 
-                statement.setString(1,transaction.getID());
-                statement.setString(2,transaction.getType());
-                statement.setDouble(3,transaction.getAmount());
-                statement.setString(4,transaction.getTo());
-                statement.setString(5,transaction.getFrom());
+                statement.setString(1, transaction.getID());
+                statement.setString(2, transaction.getType());
+                statement.setDouble(3, transaction.getAmount());
+                statement.setString(4, transaction.getTo());
+                statement.setString(5, transaction.getFrom());
                 statement.executeUpdate();
             }
+            statement.close();
 
             //continue with next part - inserting data in 'Agile_Lab_Doc'
             String insert = ("INSERT INTO Customer(name, username, password, dob)"
