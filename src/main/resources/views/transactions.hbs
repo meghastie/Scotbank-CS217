@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction </title>
+</head>
+<body>
+<style>
+        .transactions{
+            display: grid;
+            grid-template-columns: 33% 33% 34%;
+            grid-template-rows: 80px 80px 80px 80px 80px 80px 80px 80px 80px;
+            text-align: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+        .main_text{
+            font-size: 40px;
+            margin: 0 auto;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+<div class="container">
+    <div class="main">
+        <div class="main_text">Transactions</div>
+        <div class="transactions">
+            {{#each this}}
+                {{#name}}
+                <div class="row"> abcd</div>
+                {{/name}}
+            {{/each}}
+        </div>
+    </div>
+</div>
+</body>
+</html>

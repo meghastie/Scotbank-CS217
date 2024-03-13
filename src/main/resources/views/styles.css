@@ -1,16 +1,18 @@
 .main{
-   /* background: hsla(0, 12%, 91%, 1);
-    background: linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
-    background: -moz-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
-    background: -webkit-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
-    */
+    /* background: hsla(0, 12%, 91%, 1);
+     background: linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
+     background: -moz-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
+     background: -webkit-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
+     */
     background-color: aqua;
     width: 100vw;
     height: 100vh;
     background-size: cover;
     text-align: center;
     padding-top:100px;
+
 }
+
 .login{
     /* background-color: rgb(0, 0, 0); */
     background-color: #c2c2c2a5;
