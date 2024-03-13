@@ -104,7 +104,7 @@ public class Accounts {
     }
 
     @POST("/handleButtonClick")
-    public String handleButtonClick(@FormParam("username") String data) {
+    public String handleButtonClick(@FormParam("username") String data) throws SQLException {
 //        HelperMethods accounts = new HelperMethods();
         String username;
         try
@@ -117,25 +117,33 @@ public class Accounts {
         {
             username = data;
         }
-            if (username != null && !username.isEmpty()) {
-                ArrayList<Account> accounts = HelperMethods.getAccountList();
-                for (int i =0; i< accounts.size(); i++) {
-                    System.out.println("This is accounts test");
-                    System.out.println(accounts.get(i).toString());
 
-                    if (username.equals(accounts.get(i).getName())){
-                        System.out.println("WE FOUND ITTT");
-                        accounts.get(i).roundUpSwitch();
-                        if(accounts.get(i).isRoundUpEnabled()) {
-                            return "Roundup is now ON";
-                        } else {
-                            return "Roundup is now OFF";
-                        }
-                    }
+        PreparedStatement stmt = null;
+        if (username != null && !username.isEmpty()) {
+            try(Connection connection = dataSource.getConnection()){
+                stmt = connection.prepareStatement("SELECT `RoundUpEnabled` FROM `AccountList` WHERE `customerName` = ?");
+                stmt.setString(1,username);
 
-                }
+                ResultSet result = stmt.executeQuery();
+                if(!result.next()) return "account not found";
+
+                stmt = connection.prepareStatement("UPDATE `AccountList` SET `RoundUpEnabled` = ? WHERE `customerName` = ?");
+                stmt.setString(2,username);
+
+                //flips roundUp value
+                stmt.setBoolean(1, !result.getBoolean(1));
+                stmt.executeUpdate();
+                stmt.close();
+                if(!result.getBoolean(1))
+                    return "roundUp on!!!";
+                else
+                    return "roundUp off";
+
+            }catch (Exception e){
+                return "dataSource fail";
+            }
         }
-        return "account not found";
+        return  "account not found";
     }
 
 
