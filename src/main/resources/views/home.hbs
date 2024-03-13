@@ -22,7 +22,6 @@
 
         background-size: cover;
         text-align: center;
-x
     }
     .carousel-control-prev, .carousel-control-next{
         text-decoration: none;
@@ -185,6 +184,19 @@ x
         }
     });
 
+    var roundUpEnabled = false;
+
+    function toggleRoundUp() {
+        roundUpEnabled = !roundUpEnabled; // Toggle the status
+
+        // Show alert based on the roundUpEnabled status
+        if (roundUpEnabled) {
+            alert("Round Up has been enabled");
+        } else {
+            alert("Round Up has been disabled");
+        }
+    }
+
 // Get the button element
 const button = document.getElementById("submitButton");
 
@@ -202,6 +214,7 @@ var nameValue = "{{name}}";
     .then(response => response.text())
     .then(data => {
         console.log(data); // Output the response from the server
+        toggleRoundUp();
     })
     .catch(error => {
         console.error("Error:", error);
