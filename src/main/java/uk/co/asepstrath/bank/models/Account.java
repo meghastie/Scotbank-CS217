@@ -34,8 +34,6 @@ public class Account {
     public String getName(){ return name; }
 
     public String toString(){
-        System.out.println("______________________________ATTENTION TESTING BIG DEC _______________________________________");
-        System.out.println(dec);
         return name + " - " + dec.toString();
     }
 

@@ -12,6 +12,7 @@ import uk.co.asepstrath.bank.models.Transactions;
 import uk.co.asepstrath.bank.services.HelperMethods;
 
 import javax.sql.DataSource;
+import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.*;
@@ -144,39 +145,35 @@ public class Accounts {
     }
 
     @POST("/handleButtonClick")
-    public String handleButtonClick(@QueryParam String username) {
-//        if (postedData == null)
-//        {
-//            return null;
-//        }
-//
-//        String username = null;
-//
-//        try
-//        {
-//            username = URLDecoder.decode(postedData, "UTF-8");
-//        }
-//
-//        // This exception should never occur.
-//        catch (UnsupportedEncodingException e)
-//        {
-//            username = postedData;
-//        }
+    public String handleButtonClick(@FormParam("username") String data) {
+//        HelperMethods accounts = new HelperMethods();
+        String username;
+        try
+        {
+             username = URLDecoder.decode(data, "UTF-8");
+        }
 
+        // This exception should never occur.
+        catch (UnsupportedEncodingException e)
+        {
+            username = data;
+        }
+                if (username != null && !username.isEmpty()) {
+            ArrayList<HelperMethods> accounts =  new ArrayList<>() ;
+            for (int i =0; i< accounts.size(); i++) {
+                System.out.println("This is accounts test");
+                System.out.println(accounts.get(i).toString());
 
-        System.out.println("Received username: " + username); //test
-        if (username != null && !username.isEmpty()) {
-            ArrayList<Account> accounts = allAccounts();
-            for (Account acc : accounts) {
-                System.out.println("Checking account: " + acc.getUsername());
-                if (username.equals(acc.getUsername())) {
-                    acc.roundUpSwitch();
-                    if(acc.isRoundUpEnabled()) {
-                        return "Roundup is now ON";
-                    } else {
-                        return "Roundup is now OFF";
-                    }
-                }
+//                if (username.equals(acc.getUsername())){
+//                    System.out.println("WE FOUND ITTT");
+//                    acc.roundUpSwitch();
+//                    if(acc.isRoundUpEnabled()) {
+//                        return "Roundup is now ON";
+//                    } else {
+//                        return "Roundup is now OFF";
+//                    }
+//                }
+
             }
         }
         return "account not found";

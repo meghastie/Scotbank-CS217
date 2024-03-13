@@ -22,7 +22,7 @@
 
         background-size: cover;
         text-align: center;
-
+x
     }
     .carousel-control-prev, .carousel-control-next{
         text-decoration: none;
@@ -81,7 +81,7 @@
                 </div>
                 <div>
                     <button type="button" class="btn btn-outline-secondary btn-lg">Request money</button>
-                    <button type="button" class="btn btn-outline-secondary btn-lg" onclick="round()">Round Up</button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg" id="submitButton" onclick="round()">Round Up</button>
                     </a>
                 </div>
             </div>
@@ -185,36 +185,32 @@
         }
     });
 
-    function round() {
-        console.log("round function is called");
+// Get the button element
+const button = document.getElementById("submitButton");
 
-        var nameValue = "{{name}}";
-        console.log("name is" + nameValue);
+// Add a click event listener to the button
+button.addEventListener("click", function() {
+var nameValue = "{{name}}";
+    // Perform the fetch request when the button is clicked
+    fetch("/bank/handleButtonClick", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body:  "username=" + encodeURIComponent(nameValue)
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data); // Output the response from the server
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
 
-            var xhr = new XMLHttpRequest();
 
-            xhr.open("POST", "/bank/handleButtonClick");
-            xhr.setRequestHeader("Content-Type", "/bank/handleButtonClick; charset=UTF-8");
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        // Handle the response
-                        var response = xhr.responseText;
-                        console.log(response);
-                    } else {
-                        console.error('Error:', xhr.status);
-                    }
-                }
-            }
 
-            console.log("username is " + nameValue);
-
-            // var formDataString = encodeURIComponent(nameValue);
-        var formDataString = nameValue;
-            xhr.send(formDataString);
-
-    };
 
 </script>
 </body>
