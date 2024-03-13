@@ -155,13 +155,13 @@ public class Accounts {
 
     @GET("/allAccounts")
     public ArrayList<Account> getAllAccounts() {
-        ArrayList<Account> accounts = allAccounts();
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
         return accounts;
     }
 
     @GET("/displayAccounts")
     public String displayAccounts() {
-        ArrayList<Account> accounts = allAccounts();
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
 
         StringBuilder accountsString = new StringBuilder();
         for (Account account : accounts) {
