@@ -44,7 +44,7 @@ public class App extends Jooby {
 
 
         mvc(new Accounts(ds,log));
-        //mvc(new TransactionController(ds,log));
+        mvc(new TransactionController(ds,log));
         /*
         Finally we register our application lifecycle methods
          */
@@ -127,7 +127,7 @@ public class App extends Jooby {
             */
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
-                    + "(`transactionID` varchar(50) NOT NUll,"
+                    + "(`transactionID` integer NOT NUll,"
                     + "`Type` varchar(15) NOT NULL,"
                     + "`amount` double NOT NULL,"
                     + "`to` varchar(50),"
@@ -135,23 +135,20 @@ public class App extends Jooby {
                     + "PRIMARY KEY (`transactionID`)" //needed to uniquley identify the transaction as users can have many
                     + ")");
 
-
             //populates Transactions database
             List<Transactions> transactions = XmlParser.Parser();
-            PreparedStatement statement = null;
-            for(Transactions transaction: transactions) {
-                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,`to`,`from`)" + "VALUES (?,?,?,?,?)");
-                statement = connection.prepareStatement(insertAccount);
+            for(Transactions transaction: transactions){
+                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,to,from)" + "VALUES (?,?,?,?,?)");
+                PreparedStatement statement = connection.prepareStatement(insertAccount);
 
 
-                statement.setString(1, transaction.getID());
-                statement.setString(2, transaction.getType());
-                statement.setDouble(3, transaction.getAmount());
-                statement.setString(4, transaction.getTo());
-                statement.setString(5, transaction.getFrom());
+                statement.setString(1,transaction.getID());
+                statement.setString(2,transaction.getType());
+                statement.setDouble(3,transaction.getAmount());
+                statement.setString(4,transaction.getTo());
+                statement.setString(5,transaction.getFrom());
                 statement.executeUpdate();
             }
-            statement.close();
 
             //continue with next part - inserting data in 'Agile_Lab_Doc'
             String insert = ("INSERT INTO Customer(name, username, password, dob)"
@@ -159,14 +156,15 @@ public class App extends Jooby {
             String sql = "SELECT * FROM Customer";
             ResultSet rs = stmt.executeQuery(sql);
 
-            //prints transaction
-            System.out.println("BALANCE CHECKKKKK: " + HelperMethods.getCurrentBalance("3ff9324c-a3d6-43bb-83fb-8d5400001da5",ds));
-            /*
+            //prints accounts in Account database
+
             ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
             while(result.next()){
                 System.out.println(result.getString("transactionID") + " " + result.getString("Type") + " " + result.getBoolean("amount") + " " + result.getString("to") + " " + result.getString("from"));
             }
-            */
+
+
+
             //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE
             //while (rs.next()) {
             //  int id = rs.getInt("id");
@@ -195,10 +193,10 @@ public class App extends Jooby {
 
     }
 
-    /*
     private void completeTransactions(){
+        XmlParser p = new XmlParser();
         ArrayList<Account> accountList = HelperMethods.getAccountList();
-        List<Transactions> transactionList = XmlParser.Parser();
+        ArrayList<Transactions> transactionList = p.ParserList();
         System.out.println(transactionList.size());
         Boolean done = false;
 
@@ -211,5 +209,4 @@ public class App extends Jooby {
             System.out.println(done);
         }
     }
-     */
 }
