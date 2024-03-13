@@ -34,8 +34,6 @@ public class Account {
     public String getName(){ return name; }
 
     public String toString(){
-        System.out.println("______________________________ATTENTION TESTING BIG DEC _______________________________________");
-        System.out.println(dec);
         return name + " - " + dec.toString();
     }
 
@@ -61,6 +59,13 @@ public class Account {
     }
     public double getPot(){
         return pot.doubleValue();
+    }
+
+    public boolean isRoundUpEnabled() {
+        if (roundUpEnabled) {
+            return true;
+        }
+        return false;
     }
 
     public void releaseSavings(){

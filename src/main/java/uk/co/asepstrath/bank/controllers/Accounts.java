@@ -7,9 +7,13 @@ import io.jooby.exception.StatusCodeException;
 
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.models.Account;
+import uk.co.asepstrath.bank.models.Transactions;
 import uk.co.asepstrath.bank.services.HelperMethods;
 
 import javax.sql.DataSource;
+import java.awt.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.*;
 import java.util.*;
 
@@ -17,16 +21,20 @@ import java.util.*;
 public class Accounts {
     private final DataSource dataSource;
     private final Logger logger;
-    public Accounts(DataSource ds, Logger log){
+
+    public Accounts(DataSource ds, Logger log) {
         dataSource = ds;
         logger = log;
     }
+
     @GET
     public ModelAndView login() {
         Map<String, Object> model = new HashMap<>();
         model.put("name", "luke");
 
-        return new ModelAndView("login.hbs",model);
+        return new ModelAndView("login.hbs", model);
+
+
     }
 
     /*@GET("/home")
@@ -46,10 +54,10 @@ public class Accounts {
     }
 
     @GET("/details/{id}")
-    public String printAccountDetails(@PathParam String id){
-        try(Connection connection = dataSource.getConnection()){
+    public String printAccountDetails(@PathParam String id) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM `AccountList` WHERE `AccountId` = ?");
-            statement.setString(1,id);
+            statement.setString(1, id);
             ResultSet set = statement.executeQuery();
 
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
@@ -91,7 +99,43 @@ public class Accounts {
         }
         model.put("bal", bal);
 
-        return new ModelAndView("home.hbs",model);
+        return new ModelAndView("home.hbs", model);
     }
+
+    @POST("/handleButtonClick")
+    public String handleButtonClick(@FormParam("username") String data) {
+//        HelperMethods accounts = new HelperMethods();
+        String username;
+        try
+        {
+             username = URLDecoder.decode(data, "UTF-8");
+        }
+
+        // This exception should never occur.
+        catch (UnsupportedEncodingException e)
+        {
+            username = data;
+        }
+                if (username != null && !username.isEmpty()) {
+            ArrayList<HelperMethods> accounts =  new ArrayList<>() ;
+            for (int i =0; i< accounts.size(); i++) {
+                System.out.println("This is accounts test");
+                System.out.println(accounts.get(i).toString());
+
+//                if (username.equals(acc.getUsername())){
+//                    System.out.println("WE FOUND ITTT");
+//                    acc.roundUpSwitch();
+//                    if(acc.isRoundUpEnabled()) {
+//                        return "Roundup is now ON";
+//                    } else {
+//                        return "Roundup is now OFF";
+//                    }
+//                }
+
+            }
+        }
+        return "account not found";
+    }
+
 
 }
