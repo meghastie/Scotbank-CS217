@@ -190,6 +190,8 @@ public class App extends Jooby {
         System.out.println("Shutting Down...");
 
     }
+
+    /*
     private void completeTransactions(){
         ArrayList<Account> accountList = HelperMethods.getAccountList();
         List<Transactions> transactionList = XmlParser.Parser();
@@ -205,5 +207,5 @@ public class App extends Jooby {
             System.out.println(done);
         }
     }
-
+     */
 }

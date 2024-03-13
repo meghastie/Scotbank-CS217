@@ -3,15 +3,12 @@ package uk.co.asepstrath.bank.services;
 import io.jooby.StatusCode;
 import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.Unirest;
-import org.slf4j.Logger;
 import uk.co.asepstrath.bank.models.Account;
 
 import javax.sql.DataSource;
-import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
