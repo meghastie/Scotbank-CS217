@@ -162,6 +162,9 @@ public class App extends Jooby {
         XmlParser p = new XmlParser();
         ArrayList<Account> accountList = HelperMethods.getAccountList();
         ArrayList<Transactions> transactionList = p.ParserList();
+        System.out.println(transactionList.get(1).getID());
+        System.out.println(transactionList.get(2).getID());
+        System.out.println(transactionList.get(3).getID());
         for(Transactions transaction: transactionList){
             boolean finish = false;
             for(Account acc: accountList){

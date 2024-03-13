@@ -86,4 +86,14 @@ public class XmlParser {
             e.printStackTrace();
         }
         return null; }
+
+    public boolean checkID(ArrayList<Transactions> allTransactions,String newID ){
+        boolean valid = true;
+        for(Transactions t: allTransactions){
+            if(t.getID().equals(newID)){
+                valid = false;
+            }
+            }
+        return valid;
+    }
 }

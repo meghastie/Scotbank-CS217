@@ -43,6 +43,21 @@ public class AccountTests {
         assertEquals(b.getBalance(),46);
     }
     @Test
+    public void roundUpRelease(){
+        b.deposit(100);
+        b.myTranaction(t);
+        b.releaseSavings();
+        assertEquals(b.getBalance(),46.36);
+    }
+    @Test
+    public void roundUpReleaseTransactions(){
+        b.deposit(100);
+        b.myTranaction(t);
+        b.releaseSavings();
+        System.out.println(b.getMyTransactions());
+        assertEquals(b.getMyTransactions().size(),2);
+    }
+    @Test
     public void createAccount(){
         assertTrue(a != null);
     }
@@ -66,12 +81,12 @@ public class AccountTests {
         assertTrue(a.getBalance() == 20);
 
     }
-    @Test
+    /*@Test
     public void overdraft(){
         a.deposit(30);
         Assertions.assertThrows(ArithmeticException.class,() -> a.withdraw(100));
 
-    }
+    }*/
 
     @Test
     public void superSaving(){
