@@ -44,7 +44,7 @@ public class App extends Jooby {
 
 
         mvc(new Accounts(ds,log));
-        //mvc(new TransactionController(ds,log));
+        mvc(new TransactionController(ds,log));
         /*
         Finally we register our application lifecycle methods
          */
@@ -70,12 +70,6 @@ public class App extends Jooby {
             java.util.Date currentDate = new java.util.Date();
             Date sqlDate = new Date(currentDate.getTime());
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Customer`"
-                    + "(`name` varchar(255) NOT NULL,"
-                    + "`username` varchar(255) PRIMARY KEY," //two users cannot have same username, however they could possibly have same accNo - only unique identifier when paired with sort code
-                    + "`password` varchar(255) NOT NULL,"
-                    + "`dob` date"
-                    + ")");
 
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `AccountList` "
@@ -89,6 +83,7 @@ public class App extends Jooby {
                     + ")");
 
 
+                    //not being used right now
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Account` ("
                     + "`sortCode` integer NOT NULL,"
@@ -106,7 +101,7 @@ public class App extends Jooby {
             //populates Account database
             ArrayList<Account> accounts = HelperMethods.getAccountList();
             for(Account account: accounts){
-                String insertAccount = ("INSERT INTO AccountList(AccountId,customerName,startingbalance,RoundUpEnabled)" + "VALUES (?,?,?,?)");
+                String insertAccount = ("INSERT INTO AccountList(AccountId,customerName,startingbalance,RoundUpEnabled,Pot)" + "VALUES (?,?,?,?,?)");
                 PreparedStatement statement = connection.prepareStatement(insertAccount);
 
 
@@ -114,17 +109,11 @@ public class App extends Jooby {
                 statement.setString(2,account.getName());
                 statement.setDouble(3,account.getStartingBalance());
                 statement.setBoolean(4,account.getRoundUp());
+                statement.setDouble(5,account.getPot());
                 statement.executeUpdate();
             }
 
 
-            //prints accounts in Account database
-            /*
-            ResultSet result = stmt.executeQuery("SELECT * FROM AccountList");
-            while(result.next()){
-                System.out.println(result.getString("AccountId") + " " + result.getString("customerName") + " " + result.getDouble("startingbalance") + " " + result.getBoolean("RoundUpEnabled"));
-            }
-            */
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
                     + "(`transactionID` varchar(50) NOT NUll,"
