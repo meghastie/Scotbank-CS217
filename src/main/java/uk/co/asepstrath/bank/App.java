@@ -63,6 +63,9 @@ public class App extends Jooby {
 
         // Fetch DB Source
         DataSource ds = require(DataSource.class);
+        ArrayList<Account> accounts = completeTransactions();
+        XmlParser p = new XmlParser();
+        ArrayList<Transactions> transactionList = p.ParserList();
         // Open Connection to DB
         try (Connection connection = ds.getConnection()) {
             //
@@ -83,6 +86,7 @@ public class App extends Jooby {
                     + ")");
 
 
+                    //not being used right now
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Account` ("
                     + "`sortCode` integer NOT NULL,"
@@ -99,7 +103,7 @@ public class App extends Jooby {
 
             //populates Account database
 
-            ArrayList<Account> accounts = completeTransactions();
+
             for(Account account: accounts){
                 String insertAccount = ("INSERT INTO AccountList(AccountId,customerName,startingbalance,RoundUpEnabled,Pot)" + "VALUES (?,?,?,?,?)");
                 PreparedStatement statement = connection.prepareStatement(insertAccount);
@@ -114,22 +118,30 @@ public class App extends Jooby {
             }
 
 
-            //prints accounts in Account database
-            /*
-            ResultSet result = stmt.executeQuery("SELECT * FROM AccountList");
-            while(result.next()){
-                System.out.println(result.getString("AccountId") + " " + result.getString("customerName") + " " + result.getDouble("startingbalance") + " " + result.getBoolean("RoundUpEnabled"));
-            }
-            */
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
-                    + "(`transactionID` integer NOT NUll,"
-                    + "`Type` varchar(15) NOT NULL,"
-                    + "`amount` double NOT NULL,"
+                    + "(`time` varchar(50) NOT NULL,)"
+                    + "(`amount` double NOT NUll,"
+                    + "`from` varchar(50) NOT NULL,"
+                    + "`transactionID` varchar(50) NOT NULL,"
                     + "`to` varchar(50),"
-                    + "`from` varchar(50),"
+                    + "`type` varchar(50),"
                     + "PRIMARY KEY (`transactionID`)" //needed to uniquley identify the transaction as users can have many
                     + ")");
+
+            for(Transactions transaction: transactionList){
+                String insertTransaction = ("INSERT INTO Transaction(time,amount,from,transactionID,to,type)" + "VALUES (?,?,?,?,?,?)");
+                PreparedStatement statement = connection.prepareStatement(insertTransaction);
+
+
+                statement.setString(1,transaction.getTime());
+                statement.setDouble(2,transaction.getAmount());
+                statement.setString(3,transaction.getFrom());
+                statement.setString(4,transaction.getID());
+                statement.setString(5,transaction.getTo());
+                statement.setString(6,transaction.getType());
+                statement.executeUpdate();
+            }
 
 
             connection.close(); //close to free up resources
@@ -156,7 +168,6 @@ public class App extends Jooby {
                     Boolean work = acc.myTranaction(transaction);
                     finish = work || finish;
             }
-            System.out.println(finish);
         }
         return accountList;
     }
