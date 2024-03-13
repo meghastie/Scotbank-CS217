@@ -6,6 +6,7 @@ import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.models.Account;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,7 +59,8 @@ public class HelperMethods {
 
             if (!totalTo.next() || !totalFrom.next() || !startingBal.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Something doesn't work");
 
-            balance =  startingBal.getDouble(1) + (totalTo.getDouble(1) - totalFrom.getDouble(1));
+            balance =  BigDecimal.valueOf(startingBal.getDouble(1)).add(BigDecimal.valueOf(totalTo.getDouble(1))).subtract(BigDecimal.valueOf(totalFrom.getDouble(1))).doubleValue();
+            System.out.println(balance);
             return balance;
         }catch(Exception e){
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");

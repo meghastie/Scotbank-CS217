@@ -93,8 +93,8 @@ public class Accounts {
         model.put("name", username);
 
         for (Account account : accounts) {
-            if (username.equals(account.getUsername())) {
-                bal += account.getBalance();
+            if (username.equals(account.getName())) {
+                bal = HelperMethods.getCurrentBalance(account.getId(),dataSource);
             }
         }
         model.put("bal", bal);
@@ -116,23 +116,23 @@ public class Accounts {
         {
             username = data;
         }
-                if (username != null && !username.isEmpty()) {
-            ArrayList<HelperMethods> accounts =  new ArrayList<>() ;
-            for (int i =0; i< accounts.size(); i++) {
-                System.out.println("This is accounts test");
-                System.out.println(accounts.get(i).toString());
+            if (username != null && !username.isEmpty()) {
+                ArrayList<Account> accounts = HelperMethods.getAccountList();
+                for (int i =0; i< accounts.size(); i++) {
+                    System.out.println("This is accounts test");
+                    System.out.println(accounts.get(i).toString());
 
-//                if (username.equals(acc.getUsername())){
-//                    System.out.println("WE FOUND ITTT");
-//                    acc.roundUpSwitch();
-//                    if(acc.isRoundUpEnabled()) {
-//                        return "Roundup is now ON";
-//                    } else {
-//                        return "Roundup is now OFF";
-//                    }
-//                }
+                    if (username.equals(accounts.get(i).getName())){
+                        System.out.println("WE FOUND ITTT");
+                        accounts.get(i).roundUpSwitch();
+                        if(accounts.get(i).isRoundUpEnabled()) {
+                            return "Roundup is now ON";
+                        } else {
+                            return "Roundup is now OFF";
+                        }
+                    }
 
-            }
+                }
         }
         return "account not found";
     }
