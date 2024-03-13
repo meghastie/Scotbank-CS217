@@ -18,6 +18,7 @@ import java.net.URLDecoder;
 import java.sql.*;
 import java.util.*;
 
+
 @Path("/bank")
 public class Accounts {
     private final DataSource dataSource;
@@ -141,7 +142,12 @@ public class Accounts {
         }
         model.put("bal", bal);
 
+        if (username.equals("Manager")) {
+            return new ModelAndView("managerView.hbs", model);
+        }
+
         return new ModelAndView("home.hbs", model);
+
     }
 
     @POST("/handleButtonClick")
@@ -177,6 +183,28 @@ public class Accounts {
             }
         }
         return "account not found";
+    }
+
+
+    @GET("/allAccounts")
+    public ArrayList<Account> getAllAccounts() {
+        ArrayList<Account> accounts = allAccounts();
+        return accounts;
+    }
+
+    @GET("/displayAccounts")
+    public String displayAccounts() {
+        ArrayList<Account> accounts = allAccounts();
+
+        StringBuilder accountsString = new StringBuilder();
+        for (Account account : accounts) {
+            accountsString.append(account.getId()).append(",")
+                    .append(account.getName()).append(",")
+                    .append(account.getBalance()).append(",")
+                    .append(account.roundUpEnabled()).append(";");
+        }
+
+        return accountsString.toString();
     }
 
 

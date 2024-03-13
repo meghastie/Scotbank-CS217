@@ -142,6 +142,10 @@ public class Account {
         }
     }
 
-
+    public boolean roundUpEnabled() {
+        return roundUpEnabled;
+    }
 }
+
+
 
