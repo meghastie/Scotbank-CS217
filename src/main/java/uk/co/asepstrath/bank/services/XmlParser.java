@@ -1,6 +1,8 @@
 package uk.co.asepstrath.bank.services;
 
 import uk.co.asepstrath.bank.models.Transactions;
+
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -16,6 +18,14 @@ public class XmlParser {
             URL url = new URL("https://api.asep-strath.co.uk/api/transactions"); // URL to your API endpoint
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            //security things
+            dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);
+            dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+            dbFactory.setExpandEntityReferences(false);
+
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(url.openStream());
 
