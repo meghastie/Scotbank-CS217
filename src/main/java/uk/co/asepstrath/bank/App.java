@@ -132,6 +132,7 @@ public class App extends Jooby {
                     + "`amount` double NOT NULL,"
                     + "`to` varchar(50),"
                     + "`from` varchar(50),"
+                    + "`time` varchar(50),"
                     + "PRIMARY KEY (`transactionID`)" //needed to uniquley identify the transaction as users can have many
                     + ")");
 
@@ -140,7 +141,7 @@ public class App extends Jooby {
             List<Transactions> transactions = XmlParser.Parser();
             PreparedStatement statement = null;
             for(Transactions transaction: transactions) {
-                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,`to`,`from`)" + "VALUES (?,?,?,?,?)");
+                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,`to`,`from`,`time`)" + "VALUES (?,?,?,?,?,?)");
                 statement = connection.prepareStatement(insertAccount);
 
 
@@ -149,6 +150,7 @@ public class App extends Jooby {
                 statement.setDouble(3, transaction.getAmount());
                 statement.setString(4, transaction.getTo());
                 statement.setString(5, transaction.getFrom());
+                statement.setString(6,transaction.getTime());
                 statement.executeUpdate();
             }
             statement.close();
@@ -159,8 +161,6 @@ public class App extends Jooby {
             String sql = "SELECT * FROM Customer";
             ResultSet rs = stmt.executeQuery(sql);
 
-            //prints transaction
-            System.out.println("BALANCE CHECKKKKK: " + HelperMethods.getCurrentBalance("3ff9324c-a3d6-43bb-83fb-8d5400001da5",ds));
             /*
             ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
             while(result.next()){
