@@ -251,7 +251,7 @@ public class Accounts {
             accountsString.append(account.getId()).append(",")
                     .append(account.getName()).append(",")
                     .append(account.getBalance()).append(",")
-                    //.append(account.roundUpEnabled()).append(";");
+                    .append(account.roundUpEnabled()).append(";");
         }
 
         return accountsString.toString();
