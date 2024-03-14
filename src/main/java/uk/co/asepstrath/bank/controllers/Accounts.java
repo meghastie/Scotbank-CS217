@@ -175,4 +175,17 @@ public class Accounts {
     }
 
 
+    private double[] getIncome(){
+        double income[] = new double[12];
+
+
+        return income;
+    }
+
+    private double[] getSpending(){
+        double spend[] = new double[12];
+
+
+        return spend;
+    }
 }

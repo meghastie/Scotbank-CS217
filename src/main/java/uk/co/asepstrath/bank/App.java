@@ -78,6 +78,7 @@ public class App extends Jooby {
                     + "`AccountType` varchar(45),"
                     + "`startingbalance` double,"
                     + "`RoundUpEnabled` integer,"
+                    + "`Pot` double,"
                     + "PRIMARY KEY (`AccountId`)" //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
                     //+ "FOREIGN KEY (`customerName`) REFERENCES `Customer`(`customerName`)"
                     + ")");
@@ -145,11 +146,13 @@ public class App extends Jooby {
             }
             statement.close();
 
+            /*
             //continue with next part - inserting data in 'Agile_Lab_Doc'
             String insert = ("INSERT INTO Customer(name, username, password, dob)"
                     + "VALUES (?,?,?,?)");
             String sql = "SELECT * FROM Customer";
             ResultSet rs = stmt.executeQuery(sql);
+             */
 
             /*
             ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
