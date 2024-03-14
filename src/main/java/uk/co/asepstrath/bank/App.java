@@ -82,7 +82,7 @@ public class App extends Jooby {
                     //+ "FOREIGN KEY (`customerName`) REFERENCES `Customer`(`customerName`)"
                     + ")");
 
-
+            /*
                     //not being used right now
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Account` ("
@@ -96,6 +96,7 @@ public class App extends Jooby {
                     + "PRIMARY KEY (`accNum`, `sortCode`)," //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
                     + "FOREIGN KEY (`username`) REFERENCES `Customer`(`username`)"
                     + ")");
+             */
 
 
             //populates Account database
