@@ -17,7 +17,6 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class App extends Jooby {
 
@@ -65,9 +64,6 @@ public class App extends Jooby {
 
         // Fetch DB Source
         DataSource ds = require(DataSource.class);
-        ArrayList<Account> accounts = completeTransactions();
-        XmlParser p = new XmlParser();
-        ArrayList<Transactions> transactionList = p.ParserList();
         // Open Connection to DB
         try (Connection connection = ds.getConnection()) {
             //
@@ -82,12 +78,11 @@ public class App extends Jooby {
                     + "`AccountType` varchar(45),"
                     + "`startingbalance` double,"
                     + "`RoundUpEnabled` integer,"
-                    + "`RoundUpPot` double,"
                     + "PRIMARY KEY (`AccountId`)" //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
                     //+ "FOREIGN KEY (`customerName`) REFERENCES `Customer`(`customerName`)"
                     + ")");
 
-
+            /*
                     //not being used right now
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Account` ("
@@ -101,11 +96,11 @@ public class App extends Jooby {
                     + "PRIMARY KEY (`accNum`, `sortCode`)," //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
                     + "FOREIGN KEY (`username`) REFERENCES `Customer`(`username`)"
                     + ")");
+             */
 
 
             //populates Account database
-
-
+            ArrayList<Account> accounts = HelperMethods.getAccountList();
             for(Account account: accounts){
                 String insertAccount = ("INSERT INTO AccountList(AccountId,customerName,startingbalance,RoundUpEnabled,Pot)" + "VALUES (?,?,?,?,?)");
                 PreparedStatement statement = connection.prepareStatement(insertAccount);
@@ -122,29 +117,59 @@ public class App extends Jooby {
 
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
-                    + "(`time` varchar(50) NOT NULL,)"
-                    + "(`amount` double NOT NUll,"
-                    + "`from` varchar(50) NOT NULL,"
-                    + "`transactionID` varchar(50) NOT NULL,"
+                    + "(`transactionID` varchar(50) NOT NUll,"
+                    + "`Type` varchar(15) NOT NULL,"
+                    + "`amount` double NOT NULL,"
                     + "`to` varchar(50),"
-                    + "`type` varchar(50),"
+                    + "`from` varchar(50),"
+                    + "`time` varchar(50),"
                     + "PRIMARY KEY (`transactionID`)" //needed to uniquley identify the transaction as users can have many
                     + ")");
 
-            for(Transactions transaction: transactionList){
-                String insertTransaction = ("INSERT INTO Transaction(time,amount,from,transactionID,to,type)" + "VALUES (?,?,?,?,?,?)");
-                PreparedStatement statement = connection.prepareStatement(insertTransaction);
+
+            //populates Transactions database
+            List<Transactions> transactions = XmlParser.Parser();
+            PreparedStatement statement = null;
+            for(Transactions transaction: transactions) {
+                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,`to`,`from`,`time`)" + "VALUES (?,?,?,?,?,?)");
+                statement = connection.prepareStatement(insertAccount);
 
 
-                statement.setString(1,transaction.getTime());
-                statement.setDouble(2,transaction.getAmount());
-                statement.setString(3,transaction.getFrom());
-                statement.setString(4,transaction.getID());
-                statement.setString(5,transaction.getTo());
-                statement.setString(6,transaction.getType());
+                statement.setString(1, transaction.getID());
+                statement.setString(2, transaction.getType());
+                statement.setDouble(3, transaction.getAmount());
+                statement.setString(4, transaction.getTo());
+                statement.setString(5, transaction.getFrom());
+                statement.setString(6,transaction.getTime());
                 statement.executeUpdate();
             }
+            statement.close();
 
+            //continue with next part - inserting data in 'Agile_Lab_Doc'
+            String insert = ("INSERT INTO Customer(name, username, password, dob)"
+                    + "VALUES (?,?,?,?)");
+            String sql = "SELECT * FROM Customer";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            /*
+            ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
+            while(result.next()){
+                System.out.println(result.getString("transactionID") + " " + result.getString("Type") + " " + result.getBoolean("amount") + " " + result.getString("to") + " " + result.getString("from"));
+            }
+            */
+            //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE
+            //while (rs.next()) {
+            //  int id = rs.getInt("id");
+            //String name = rs.getString("name");
+            //int age = rs.getInt("phone");
+            //String address = rs.getString("address");
+            //double salary = rs.getDouble("salary");
+            //java.sql.Date date = rs.getDate("dob");
+            //Employee employee = new Employee(id, name, age, address, salary);
+            //}
+            //rs.close();``
+
+            //completeTransactions();
 
             connection.close(); //close to free up resources
         } catch (SQLException e) {
@@ -160,17 +185,21 @@ public class App extends Jooby {
 
     }
 
-    private ArrayList<Account> completeTransactions(){
-        XmlParser p = new XmlParser();
+    /*
+    private void completeTransactions(){
         ArrayList<Account> accountList = HelperMethods.getAccountList();
-        ArrayList<Transactions> transactionList = p.ParserList();
+        List<Transactions> transactionList = XmlParser.Parser();
+        System.out.println(transactionList.size());
+        Boolean done = false;
+
         for(Transactions transaction: transactionList){
-            boolean finish = false;
+            done = false;
             for(Account acc: accountList){
-                    Boolean work = acc.myTranaction(transaction);
-                    finish = work || finish;
+                Boolean test = acc.myTranaction(transaction);
+                done = done || test;
             }
+            System.out.println(done);
         }
-        return accountList;
     }
+     */
 }
