@@ -30,14 +30,6 @@ public class Accounts {
         return new ModelAndView("login.hbs",model);
     }
 
-    /*@GET("/home")
-    public ModelAndView home() {
-        Map<String, Object> model = new HashMap<>();
-        model.put("name", "luke");
-
-        return new ModelAndView("home.hbs",model);
-    }*/
-
     @GET("/accounts")
     public String sayHi() {
         String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
@@ -117,6 +109,56 @@ public class Accounts {
             String id = set.getString("AccountId");
             //bal = set.getDouble("startingbalance");
             bal = getCurrentBalance(id, dataSource);
+
+            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ? ORDER BY amount DESC");
+            recentTransactionsStatement.setString(1, id);
+            recentTransactionsStatement.setString(2, id);
+            ResultSet recentTransactionsResultSet = recentTransactionsStatement.executeQuery();
+            //recentTransactionsResultSet.next();
+            ArrayList<Double> amounts = new ArrayList<>();
+            ArrayList<String> types = new ArrayList<>();
+
+            while (recentTransactionsResultSet.next()) {
+                double amount = recentTransactionsResultSet.getDouble(1);
+                String type = recentTransactionsResultSet.getString(2);
+                amounts.add(amount);
+                types.add(type);
+            }
+
+            double amount1 =0.0;
+            double amount2 =0.0;
+            double amount3 =0.0;
+            String type1 = "N/A";
+            String type2 = "N/A";
+            String type3 = "N/A";
+
+            switch (amounts.size()) {
+                case 1:
+                    amount1 = amounts.get(0);
+                    type1 = types.get(0);
+                    break;
+                case 2:
+                    amount1 = amounts.get(0);
+                    amount2 = amounts.get(1);
+                    type1 = types.get(0);
+                    type2 = types.get(1);
+                    break;
+                case 3:
+                    amount1 = amounts.get(0);
+                    amount2 = amounts.get(1);
+                    amount3 = amounts.get(2);
+                    type1 = types.get(0);
+                    type2 = types.get(1);
+                    type3 = types.get(2);
+                    break;
+            }
+
+            model.put("amount1", amount1);
+            model.put("amount2", amount2);
+            model.put("amount3", amount3);
+            model.put("type1", type1);
+            model.put("type2", type2);
+            model.put("type3", type3);
 
         } catch (SQLException e) {
             // If something does go wrong this will log the stack trace
