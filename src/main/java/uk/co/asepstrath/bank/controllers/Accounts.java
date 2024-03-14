@@ -4,13 +4,17 @@ import io.jooby.ModelAndView;
 import io.jooby.StatusCode;
 import io.jooby.annotation.*;
 import io.jooby.exception.StatusCodeException;
-import kong.unirest.core.Unirest;
 
+import kong.unirest.core.Unirest;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.models.Account;
+import uk.co.asepstrath.bank.models.Transactions;
 import uk.co.asepstrath.bank.services.HelperMethods;
 
 import javax.sql.DataSource;
+import java.awt.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.*;
 import java.util.*;
 
@@ -85,6 +89,7 @@ public class Accounts {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM `AccountList` WHERE `AccountId` = ?");
             statement.setString(1,id);
             ResultSet set = statement.executeQuery();
+            statement.close();
 
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
 
@@ -168,10 +173,90 @@ public class Accounts {
         }
 
         model.put("name", username);
+
+        ArrayList<Account> accounts;
+        accounts = HelperMethods.getAccountList();
+
+        for(int i=0; i< accounts.size(); i++) {
+            if(username.equals(accounts.get(i).getUsername())) {
+                bal+= accounts.get(i).getBalance();
+            }
+        }
         model.put("bal", bal);
 
-        return new ModelAndView("home.hbs",model);
+        if (username.equals("Manager")) {
+            return new ModelAndView("managerView.hbs", model);
+        }
+
+        return new ModelAndView("home.hbs", model);
+
     }
+
+    @POST("/handleButtonClick")
+    public String handleButtonClick(@FormParam("username") String data) throws SQLException {
+//        HelperMethods accounts = new HelperMethods();
+        String username;
+        try
+        {
+            username = URLDecoder.decode(data, "UTF-8");
+        }
+
+        // This exception should never occur.
+        catch (UnsupportedEncodingException e)
+        {
+            username = data;
+        }
+
+        PreparedStatement stmt = null;
+        if (username != null && !username.isEmpty()) {
+            try(Connection connection = dataSource.getConnection()){
+                stmt = connection.prepareStatement("SELECT `RoundUpEnabled` FROM `AccountList` WHERE `customerName` = ?");
+                stmt.setString(1,username);
+
+                ResultSet result = stmt.executeQuery();
+                if(!result.next()) return "account not found";
+
+                stmt = connection.prepareStatement("UPDATE `AccountList` SET `RoundUpEnabled` = ? WHERE `customerName` = ?");
+                stmt.setString(2,username);
+
+                //flips roundUp value
+                stmt.setBoolean(1, !result.getBoolean(1));
+                stmt.executeUpdate();
+                stmt.close();
+                if(!result.getBoolean(1))
+                    return "roundUp on!!!";
+                else
+                    return "roundUp off";
+
+            }catch (Exception e){
+                return "dataSource fail";
+            }
+        }
+        return  "account not found";
+    }
+
+
+    @GET("/allAccounts")
+    public ArrayList<Account> getAllAccounts() {
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
+        return accounts;
+    }
+
+    @GET("/displayAccounts")
+    public String displayAccounts() {
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
+
+        StringBuilder accountsString = new StringBuilder();
+        for (Account account : accounts) {
+            accountsString.append(account.getId()).append(",")
+                    .append(account.getName()).append(",")
+                    .append(account.getBalance()).append(",")
+                    //.append(account.roundUpEnabled()).append(";");
+        }
+
+        return accountsString.toString();
+    }
+
 
 
     public static double getCurrentBalance(String id,DataSource ds){
@@ -200,4 +285,3 @@ public class Accounts {
         }
     }
 }
-
