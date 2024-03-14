@@ -22,8 +22,9 @@ public class AccountTests {
     }
     @Test
     public void minusBalance(){
+        a.deposit(100);
         a.myTranaction(f);
-        System.out.println(a.getBalance());
+        assertEquals(33.11,a.getBalance());
     }
     @Test
     public void transactionTo(){

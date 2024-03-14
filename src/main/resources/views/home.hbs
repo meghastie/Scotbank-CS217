@@ -100,7 +100,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Transaction 1</h5>
-                            <p class="card-text">Amount: {{amount}} Type: {{type}}</p>
+                            <p class="card-text">Amount: {{amount1}} Type: {{type1}}</p>
 
 
                         </div>
@@ -110,7 +110,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Transaction 2</h5>
-                            <p class="card-text">Amount: {{amount}} Type: {{type}}</p>
+                            <p class="card-text">Amount: {{amount2}} Type: {{type2}}</p>
 
                         </div>
                     </div>
@@ -119,7 +119,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Transaction 3</h5>
-                            <p class="card-text">Amount: {{amount}} Type: {{type}}</p>
+                            <p class="card-text">Amount: {{amount3}} Type: {{type3}}</p>
 
                         </div>
                     </div>
@@ -185,6 +185,19 @@
         }
     });
 
+    var roundUpEnabled = false;
+
+    function toggleRoundUp() {
+        roundUpEnabled = !roundUpEnabled; // Toggle the status
+
+        // Show alert based on the roundUpEnabled status
+        if (roundUpEnabled) {
+            alert("Round Up has been enabled");
+        } else {
+            alert("Round Up has been disabled");
+        }
+    }
+
 // Get the button element
 const button = document.getElementById("submitButton");
 
@@ -202,6 +215,7 @@ var nameValue = "{{name}}";
     .then(response => response.text())
     .then(data => {
         console.log(data); // Output the response from the server
+        toggleRoundUp();
     })
     .catch(error => {
         console.error("Error:", error);

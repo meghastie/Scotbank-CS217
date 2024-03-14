@@ -83,9 +83,10 @@ public class Account {
 
     public void withdraw(double money){
         dec = dec.subtract(BigDecimal.valueOf(money));
-        /*if(dec.doubleValue()<0){
+        if(dec.doubleValue()<0){
+            dec.add(BigDecimal.valueOf(money));
             throw new ArithmeticException();
-        }*/
+        }
     }
     public String getAccNum(){ return accNum; }
     public String getSortCode(){ return sortCode; }
@@ -142,6 +143,10 @@ public class Account {
         }
     }
 
-
+    public boolean roundUpEnabled() {
+        return roundUpEnabled;
+    }
 }
+
+
 

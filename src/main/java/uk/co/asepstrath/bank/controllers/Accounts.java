@@ -17,6 +17,7 @@ import java.net.URLDecoder;
 import java.sql.*;
 import java.util.*;
 
+
 @Path("/bank")
 public class Accounts {
     private final DataSource dataSource;
@@ -76,17 +77,70 @@ public class Accounts {
     public ModelAndView transferToHome(String username, String password) {
         Map<String, Object> model = new HashMap<>();
         double bal = 0;
-        /*try(Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("SELECT balance FROM `AccountList`, `Account` WHERE `customerName` = username AND `AccountList.username` = `Account.username`;?");
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
             statement.setString(1,username);
             ResultSet set = statement.executeQuery();
+            if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
+            String id = set.getString("AccountId");
+
+            bal = HelperMethods.getCurrentBalance(account.getId(),dataSource);
+
+            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ? ORDER BY amount DESC");
+            recentTransactionsStatement.setString(1, id);
+            recentTransactionsStatement.setString(2, id);
+            ResultSet recentTransactionsResultSet = recentTransactionsStatement.executeQuery();
+            ArrayList<Double> amounts = new ArrayList<>();
+            ArrayList<String> types = new ArrayList<>();
+
+            while (recentTransactionsResultSet.next()) {
+                double amount = recentTransactionsResultSet.getDouble(1);
+                String type = recentTransactionsResultSet.getString(2);
+                amounts.add(amount);
+                types.add(type);
+            }
+
+            double amount1 =0.0;
+            double amount2 =0.0;
+            double amount3 =0.0;
+            String type1 = "N/A";
+            String type2 = "N/A";
+            String type3 = "N/A";
+
+            switch (amounts.size()) {
+                case 1:
+                    amount1 = amounts.get(0);
+                    type1 = types.get(0);
+                    break;
+                case 2:
+                    amount1 = amounts.get(0);
+                    amount2 = amounts.get(1);
+                    type1 = types.get(0);
+                    type2 = types.get(1);
+                    break;
+                case 3:
+                    amount1 = amounts.get(0);
+                    amount2 = amounts.get(1);
+                    amount3 = amounts.get(2);
+                    type1 = types.get(0);
+                    type2 = types.get(1);
+                    type3 = types.get(2);
+                    break;
+            }
+
+            model.put("amount1", amount1);
+            model.put("amount2", amount2);
+            model.put("amount3", amount3);
+            model.put("type1", type1);
+            model.put("type2", type2);
+            model.put("type3", type3);
 
         } catch (SQLException e) {
             // If something does go wrong this will log the stack trace
             logger.error("Database Error Occurred", e);
             // And return a HTTP 500 error to the requester
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
-        }*/
+        }
 
 
         ArrayList<Account> accounts;
@@ -100,7 +154,12 @@ public class Accounts {
         }
         model.put("bal", bal);
 
+        if (username.equals("Manager")) {
+            return new ModelAndView("managerView.hbs", model);
+        }
+
         return new ModelAndView("home.hbs", model);
+
     }
 
     @POST("/handleButtonClick")
@@ -144,6 +203,28 @@ public class Accounts {
             }
         }
         return  "account not found";
+    }
+
+
+    @GET("/allAccounts")
+    public ArrayList<Account> getAllAccounts() {
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
+        return accounts;
+    }
+
+    @GET("/displayAccounts")
+    public String displayAccounts() {
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
+
+        StringBuilder accountsString = new StringBuilder();
+        for (Account account : accounts) {
+            accountsString.append(account.getId()).append(",")
+                    .append(account.getName()).append(",")
+                    .append(account.getBalance()).append(",")
+                    .append(account.roundUpEnabled()).append(";");
+        }
+
+        return accountsString.toString();
     }
 
 
