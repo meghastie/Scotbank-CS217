@@ -1,15 +1,25 @@
 package uk.co.asepstrath.bank.services;
 
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.models.Account;
 
+import javax.sql.DataSource;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class HelperMethods {
 
+    public static String getStringFromApi(String url){
+        return Unirest.get(url).asString().getBody();
+    }
     public static ArrayList<Account> getAccountList(){
-        String response = Unirest.get("https://api.asep-strath.co.uk/api/accounts").asString().getBody();
+        String response = getStringFromApi("https://api.asep-strath.co.uk/api/accounts");
         StringTokenizer tokens = new StringTokenizer(response,"[]{},:\"");
 
         ArrayList<Account> accounts = new ArrayList<>();
@@ -28,5 +38,33 @@ public class HelperMethods {
         }
 
         return accounts;
+    }
+
+    public static double getCurrentBalance(String id,DataSource ds){
+        double balance = -9999.0;
+        try(Connection connection = ds.getConnection()){
+            PreparedStatement stmt = connection.prepareStatement("SELECT SUM(`amount`) AS `total` FROM `Transaction` WHERE `to` = ?");
+            stmt.setString(1,id);
+
+
+            ResultSet totalTo = stmt.executeQuery();
+
+            stmt = connection.prepareStatement("SELECT SUM(amount) FROM `Transaction` WHERE `from` = ?");
+            stmt.setString(1,id);
+            ResultSet totalFrom = stmt.executeQuery();
+
+            stmt = connection.prepareStatement("SELECT `startingbalance` FROM `AccountList` WHERE `AccountId` = ?");
+            stmt.setString(1,id);
+            ResultSet startingBal = stmt.executeQuery();
+
+            if (!totalTo.next() || !totalFrom.next() || !startingBal.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Something doesn't work");
+
+            balance =  BigDecimal.valueOf(startingBal.getDouble(1)).add(BigDecimal.valueOf(totalTo.getDouble(1))).subtract(BigDecimal.valueOf(totalFrom.getDouble(1))).doubleValue();
+
+            stmt.close();
+            return balance;
+        }catch(Exception e){
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
+        }
     }
 }

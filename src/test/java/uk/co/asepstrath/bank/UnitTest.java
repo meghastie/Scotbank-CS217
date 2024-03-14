@@ -3,6 +3,8 @@ package uk.co.asepstrath.bank;
 import io.jooby.StatusCode;
 import io.jooby.test.MockResponse;
 import io.jooby.test.MockRouter;
+import org.h2.command.dml.Help;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.models.Account;
 import uk.co.asepstrath.bank.services.HelperMethods;
@@ -40,5 +42,10 @@ public class UnitTest {
         router.get("/bank", rsp -> {
             assertEquals(StatusCode.OK,rsp.getStatusCode());
         });
+    }
+
+    @Test
+    public void getStringFromUrlReturnsString(){
+        Assertions.assertInstanceOf(String.class,HelperMethods.getStringFromApi("https://api.asep-strath.co.uk/api/accounts"));
     }
 }
