@@ -84,7 +84,7 @@ public class Accounts {
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
             String id = set.getString("AccountId");
 
-            bal = HelperMethods.getCurrentBalance(account.getId(),dataSource);
+            bal = HelperMethods.getCurrentBalance(id,dataSource);
 
             PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ? ORDER BY amount DESC");
             recentTransactionsStatement.setString(1, id);
