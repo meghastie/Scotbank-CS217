@@ -77,6 +77,11 @@ public class Accounts {
     public ModelAndView transferToHome(String username, String password) {
         Map<String, Object> model = new HashMap<>();
         double bal = 0;
+
+        if (username.equals("Manager")) {
+            return new ModelAndView("managerView.hbs", model);
+        }
+
         try(Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
             statement.setString(1,username);
@@ -84,7 +89,7 @@ public class Accounts {
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
             String id = set.getString("AccountId");
 
-            bal = HelperMethods.getCurrentBalance(account.getId(),dataSource);
+            bal = HelperMethods.getCurrentBalance(id,dataSource);
 
             PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ? ORDER BY amount DESC");
             recentTransactionsStatement.setString(1, id);
@@ -154,9 +159,6 @@ public class Accounts {
         }
         model.put("bal", bal);
 
-        if (username.equals("Manager")) {
-            return new ModelAndView("managerView.hbs", model);
-        }
 
         return new ModelAndView("home.hbs", model);
 
@@ -228,4 +230,17 @@ public class Accounts {
     }
 
 
+    private double[] getIncome(){
+        double income[] = new double[12];
+
+
+        return income;
+    }
+
+    private double[] getSpending(){
+        double spend[] = new double[12];
+
+
+        return spend;
+    }
 }
