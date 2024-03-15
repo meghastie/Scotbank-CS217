@@ -77,6 +77,11 @@ public class Accounts {
     public ModelAndView transferToHome(String username, String password) {
         Map<String, Object> model = new HashMap<>();
         double bal = 0;
+
+        if (username.equals("Manager")) {
+            return new ModelAndView("managerView.hbs", model);
+        }
+
         try(Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
             statement.setString(1,username);
@@ -154,9 +159,6 @@ public class Accounts {
         }
         model.put("bal", bal);
 
-        if (username.equals("Manager")) {
-            return new ModelAndView("managerView.hbs", model);
-        }
 
         return new ModelAndView("home.hbs", model);
 
