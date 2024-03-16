@@ -159,6 +159,9 @@ public class Accounts {
         }
         model.put("bal", bal);
 
+        if (username.equals("Manager")) {
+            return new ModelAndView("managerView.hbs", model);
+        }
 
         return new ModelAndView("home.hbs", model);
 

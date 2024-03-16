@@ -45,6 +45,7 @@ public class App extends Jooby {
 
         mvc(new Accounts(ds,log));
         mvc(new TransactionController(ds,log));
+
         /*
         Finally we register our application lifecycle methods
          */
