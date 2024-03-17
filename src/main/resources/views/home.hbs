@@ -148,39 +148,52 @@
 
 
 <script>
-            // Example Data - need an array with users income and spending
-            var incomeData = [5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000];
-            var spendingData = [3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500];
 
-            // Create Chart
-            var ctx = document.getElementById('incomeSpendingChart').getContext('2d');
-            var myBarChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                    datasets: [
-                        {
-                            label: 'Income',
-                            backgroundColor: 'rgba(255, 105, 180, 0.5)',
-                            borderColor: 'rgba(255, 105, 180, 1)',
-                            borderWidth: 1,
-                            data: incomeData //replace with our income array
-                        },
-                        {
-                            label: 'Spending',
-                            backgroundColor: 'rgba(128, 0, 128, 0.5)',
-                            borderColor: 'rgba(128, 0, 128, 1)',
-                            borderWidth: 1,
-                            data: spendingData //replace with our income array
-                        }
-                    ]
-                },
-                options: {
-                    responsive: false,
-                    maintainAspectRatio: true,
+    fetch('/bank/income')
+            .then(response => response.json())
+            .then(incomeData => {
+                // Make another AJAX request to fetch spending data
+                fetch('/bank/outgoing')
+                        .then(response => response.json())
+                        .then(spendingData => {
+                            // Update chart with fetched data
+                            updateChart(incomeData, spendingData);
+                        });
+            })
+            .catch(error => console.error('Error fetching data:', error));
 
-                }
-            });
+    function updateChart(incomeData, spendingData) {
+
+        // Create Chart
+        var ctx = document.getElementById('incomeSpendingChart').getContext('2d');
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Total"],
+                datasets: [
+                    {
+                        label: 'Income',
+                        backgroundColor: 'rgba(255, 105, 180, 0.5)',
+                        borderColor: 'rgba(255, 105, 180, 1)',
+                        borderWidth: 1,
+                        data: incomeData //replace with our income array
+                    },
+                    {
+                        label: 'Spending',
+                        backgroundColor: 'rgba(128, 0, 128, 0.5)',
+                        borderColor: 'rgba(128, 0, 128, 1)',
+                        borderWidth: 1,
+                        data: spendingData //replace with our income array
+                    }
+                ]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: true,
+
+            }
+        });
+    }
         </script>
 
 

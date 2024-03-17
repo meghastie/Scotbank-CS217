@@ -136,4 +136,28 @@ public class Accounts {
         return new ModelAndView("home.hbs",model);
     }
 
+    @GET("/income")
+    public double income(@PathParam String username) {
+        double incomeData = 0.0;
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
+        for (Account account : accounts) {
+            if (username.equals(account.getName())) {
+                incomeData = account.getIncomeData();
+            }
+        }
+        return incomeData;
+    }
+
+    @GET("/outgoing")
+    public double outgoing(@PathParam String username) {
+        double outgoingData = 0.0;
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
+        for (Account account : accounts) {
+            if (username.equals(account.getName())) {
+                outgoingData = account.getSpendingData();
+            }
+        }
+        return outgoingData;
+    }
+
 }
