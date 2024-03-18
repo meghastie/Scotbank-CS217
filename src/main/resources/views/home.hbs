@@ -74,13 +74,13 @@
                 <div class="display_acc_data">
                     <h2 style = "">Hello {{name}}</h2>
                 </div>
-                <p style = "font-size: 15px; margin-bottom: 30px;">accNo sortCode</p> <!-- add handlebars -->
+                <!-- <p style = "font-size: 15px; margin-bottom: 30px;">accNo sortCode</p> -->
                 <div class="balance_available">
                     <h4>Available Balance:</h4>
                     <h4>{{bal}}</h4>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-outline-secondary btn-lg">Request money</button>
+                    <!-- <button type="button" class="btn btn-outline-secondary btn-lg">Request money</button> -->
                     <button type="button" class="btn btn-outline-secondary btn-lg" id="submitButton" onclick="round()">Round Up</button>
                     </a>
                 </div>
@@ -143,6 +143,7 @@
         <canvas id="incomeSpendingChart" class="mx-auto" style=" display: block;" width="1000%" height="500px" ></canvas>
 
     </div>
+        <p style = "margin-top: 40px; margin-bottom: 40px;">Don't see anything? Not to worry! Once you make your first transaction / receive your first payment the chart will be automatically updated.</p>
 </div>
 
 
@@ -151,6 +152,7 @@
 
 
 <script>
+    /*
     // Example Data - need an array with users income and spending
     var incomeData = [5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000];
     var spendingData = [3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500];
@@ -184,6 +186,77 @@
 
         }
     });
+     */
+
+    var nameValue = "{{name}}";
+    console.log(nameValue);
+
+    // Fetch outgoing data first
+    var outgoingPromise = fetch("/bank/outgoing/" + encodeURIComponent(nameValue))
+            .then(response => response.text())
+            .catch(error => {
+                console.error("Error fetching outgoing data:", error);
+                return 0; // Return 0 if outgoing data cannot be fetched
+            });
+
+
+    // Fetch income data
+    var incomePromise = fetch("/bank/income/" + encodeURIComponent(nameValue))
+            .then(response => response.text())
+            .catch(error => {
+                console.error("Error fetching income data:", error);
+                return 0; // Return 0 if income data cannot be fetched
+            });
+
+    // Once both promises resolve, update the chart with fetched data
+    Promise.all([outgoingPromise, incomePromise])
+            .then(([outgoingData, incomeData]) => {
+                updateChart(incomeData, outgoingData);
+            })
+            .catch(error => console.error("Error fetching data:", error));
+
+    function updateChart(incomeData, outgoingData) {
+        console.log("Updating chart with income data:", incomeData);
+        console.log("Updating chart with outgoing data:", outgoingData);
+
+        // Create Chart
+        var ctx = document.getElementById('incomeSpendingChart').getContext('2d');
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Total"],
+                datasets: [
+                    {
+                        label: 'Income',
+                        backgroundColor: 'rgba(255, 105, 180, 0.5)',
+                        borderColor: 'rgba(255, 105, 180, 1)',
+                        borderWidth: 1,
+                        data: [incomeData], // Use an array to hold income data
+                        barPercentage: 0.8,
+                    },
+                    {
+                        label: 'Spending',
+                        backgroundColor: 'rgba(128, 0, 128, 0.5)',
+                        borderColor: 'rgba(128, 0, 128, 1)',
+                        borderWidth: 1,
+                        data: [outgoingData], // Use an array to hold outgoing data
+                        barPercentage: 0.8,
+                    }
+                ]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        suggestedMax: 200
+                    }
+                }
+            }
+        });
+
+    }
+
 
     var roundUpEnabled = false;
 

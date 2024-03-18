@@ -154,10 +154,15 @@ public class App extends Jooby {
             ResultSet rs = stmt.executeQuery(sql);
              */
             /*
+
+
             ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
             while(result.next()){
                 System.out.println(result.getString("transactionID") + " " + result.getString("Type") + " " + result.getDouble("amount") + " " + result.getString("to") + " " + result.getString("from"));
             }
+
+
+
              */
             //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE
             //while (rs.next()) {
