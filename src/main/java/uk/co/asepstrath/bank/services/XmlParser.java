@@ -13,41 +13,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XmlParser {
-    public static List<Transactions> Parser() {
+    public static ArrayList<Transactions> Parser() {
         try {
-            URL url = new URL("https://api.asep-strath.co.uk/api/transactions"); // URL to your API endpoint
+            int p = 0;
+            NodeList nodeList;
+            ArrayList<Transactions> transactionsList = new ArrayList<>();
+            do {
+                String urlString = "https://api.asep-strath.co.uk/api/transactions?size=1000&page=" + p; // URL to your API endpoint
+                URL url = new URL(urlString);
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                //security things
+                dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+                dbFactory.setExpandEntityReferences(false);
 
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            //security things
-            dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);
-            dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-            dbFactory.setExpandEntityReferences(false);
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(url.openStream());
 
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(url.openStream());
+                doc.getDocumentElement().normalize();
 
-            doc.getDocumentElement().normalize();
+                nodeList = doc.getElementsByTagName("results");
 
-            NodeList nodeList = doc.getElementsByTagName("results");
-            List<Transactions> transactionsList = new ArrayList<>();
 
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Element element = (Element) nodeList.item(i);
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    Element element = (Element) nodeList.item(i);
+                    String from = null;
+                    String to = null;
+                    String time = element.getElementsByTagName("timestamp").item(0).getTextContent();
+                    double amount = Double.parseDouble(element.getElementsByTagName("amount").item(0).getTextContent());
+                    try {
+                        from = element.getElementsByTagName("from").item(0).getTextContent();
+                    } catch (NullPointerException e){
+                        from = null;
+                    }
+                    String id = element.getElementsByTagName("id").item(0).getTextContent();
 
-                String time = element.getElementsByTagName("timestamp").item(0).getTextContent();
-                double amount = Double.parseDouble(element.getElementsByTagName("amount").item(0).getTextContent());
-                String from = element.getElementsByTagName("from").item(0).getTextContent();
-                String id = element.getElementsByTagName("id").item(0).getTextContent();
-                String to = element.getElementsByTagName("to").item(0).getTextContent();
-                String type = element.getElementsByTagName("type").item(0).getTextContent();
+                    try{
+                        to = element.getElementsByTagName("to").item(0).getTextContent();
+                    } catch (NullPointerException e){
+                        to = null;
+                    }
+                    String type = element.getElementsByTagName("type").item(0).getTextContent();
 
-                Transactions transaction = new Transactions(time, amount, from, id, to, type);
-                transactionsList.add(transaction);
-            }
+                    Transactions transaction = new Transactions(time, amount, from, id, to, type);
+                    transactionsList.add(transaction);
 
+                }
+                p++;
+            } while (nodeList.getLength() > 0);
+            return transactionsList;
          /*
          // Printing the transactions
          for (Transactions transaction : transactionsList) {
@@ -61,7 +78,7 @@ public class XmlParser {
          }
           */
 
-            return transactionsList;
+
         } catch (Exception e) {
             e.printStackTrace();
         }

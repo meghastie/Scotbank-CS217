@@ -7,7 +7,9 @@ public class Transactions {
     private String id;
     private String to;
     private String type;
+    public Transactions(){
 
+    }
     public Transactions(String time, double amount, String from, String id, String to, String type){
         this.time = time;
         this.amount = amount;

@@ -77,7 +77,7 @@ public class Account {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
         XmlParser p = new XmlParser();
-        ArrayList<Transactions> allTransactions = p.ParserList();
+        ArrayList<Transactions> allTransactions = p.Parser();
         boolean valid = false;
         String thisTransactionID = null;
         while (!valid) {
