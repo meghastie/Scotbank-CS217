@@ -1,7 +1,12 @@
 package uk.co.asepstrath.bank.models;
 
+import uk.co.asepstrath.bank.services.XmlParser;
+
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Random;
 
 import static java.lang.Math.round;
 
@@ -61,14 +66,40 @@ public class Account {
         return pot.doubleValue();
     }
 
-    public boolean isRoundUpEnabled() {
-        if (roundUpEnabled) {
-            return true;
-        }
-        return false;
-    }
+    public void releaseSavings() {
 
-    public void releaseSavings(){
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+        XmlParser p = new XmlParser();
+        ArrayList<Transactions> allTransactions = p.ParserList();
+        boolean valid = false;
+        String thisTransactionID = null;
+        while (!valid) {
+            thisTransactionID = "";
+            Random rand = new Random();
+            for (int i = 0; i < 8; i++) {
+                int number = rand.nextInt(10);
+                thisTransactionID += number;
+            }
+            thisTransactionID += "-";
+            for (int i = 0; i < 4; i++) {
+                int number = rand.nextInt(10);
+                thisTransactionID += number;
+            }
+            thisTransactionID += "-";
+            for (int i = 0; i < 4; i++) {
+                int number = rand.nextInt(10);
+                thisTransactionID += number;
+            }
+            thisTransactionID += "-";
+            for (int i = 0; i < 12; i++) {
+                int number = rand.nextInt(10);
+                thisTransactionID += number;
+            }
+            valid = p.checkID(allTransactions, thisTransactionID);
+        }
+        System.out.println(thisTransactionID);
+        Transactions thisTransaction = new Transactions(timeStamp, pot.doubleValue(), id, thisTransactionID, name, "Saving pot reclaim");
+        myTransactions.add(thisTransaction);
         dec = dec.add(pot);
         pot = BigDecimal.ZERO;
     }
@@ -88,6 +119,7 @@ public class Account {
             throw new ArithmeticException();
         }
     }
+    public ArrayList<Transactions> getMyTransactions(){ return myTransactions; }
     public String getAccNum(){ return accNum; }
     public String getSortCode(){ return sortCode; }
     public String getCardNumber(){ return cardNumber; }
