@@ -81,7 +81,7 @@
                 </div>
                 <div>
                      <button type="button" class="btn btn-outline-secondary btn-lg" onclick="add_money()">Request money</button>
-                    <button type="button" class="btn btn-outline-secondary btn-lg" id="submitButton" onclick="round()">Round Up</button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg" id="submitButton">Round Up</button>
                     </a>
                 </div>
             </div>
@@ -177,7 +177,6 @@ function add_money(){
         console.error("Error:", error);
     });
     console.log(entry);
-    location.reload();
 }
 
 
@@ -230,8 +229,8 @@ function add_money(){
         console.log("Updating chart with payment data:", paymentData);
         console.log("Updating chart with income data:", withdrawData);
         console.log("Updating chart with deposit data:", depositData);
-        console.log("Updating chart with transfers to data:", transferData);
-        console.log("Updating chart with transfer data:", collectedRoundsData);
+        console.log("Updating chart with transfer data:", transferData);
+        console.log("Updating chart with roundUp data:", collectedRoundsData);
 
         // Create Chart
         var ctx = document.getElementById('incomeSpendingChart').getContext('2d');
