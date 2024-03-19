@@ -64,19 +64,20 @@ public class XmlParser {
                 }
                 p++;
             } while (nodeList.getLength() > 0);
+
+            /*
+            // Printing the transactions
+            for (Transactions transaction : transactionsList) {
+                System.out.println("Time: " + transaction.getTime());
+                System.out.println("Amount: " + transaction.getAmount());
+                System.out.println("From: " + transaction.getFrom());
+                System.out.println("ID: " + transaction.getID());
+                System.out.println("To: " + transaction.getTo());
+                System.out.println("Type: " + transaction.getType());
+                System.out.println();
+            }
+            */
             return transactionsList;
-         /*
-         // Printing the transactions
-         for (Transactions transaction : transactionsList) {
-             System.out.println("Time: " + transaction.getTime());
-             System.out.println("Amount: " + transaction.getAmount());
-             System.out.println("From: " + transaction.getFrom());
-             System.out.println("ID: " + transaction.getID());
-             System.out.println("To: " + transaction.getTo());
-             System.out.println("Type: " + transaction.getType());
-             System.out.println();
-         }
-          */
 
 
         } catch (Exception e) {
