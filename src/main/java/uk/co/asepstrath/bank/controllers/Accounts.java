@@ -15,6 +15,8 @@ import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -84,7 +86,7 @@ public class Accounts {
 
             bal = HelperMethods.getCurrentBalance(id, dataSource);
 
-            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ?  LIMIT 3");
+            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ? ORDER BY `amount` DESC LIMIT 3");
             recentTransactionsStatement.setString(1, id);
             recentTransactionsStatement.setString(2, id);
             ResultSet recentTransactionsResultSet = recentTransactionsStatement.executeQuery();
@@ -152,9 +154,6 @@ public class Accounts {
         }
         model.put("bal", bal);
 
-        if (username.equals("Manager")) {
-            return new ModelAndView("managerView.hbs", model);
-        }
 
         return new ModelAndView("home.hbs", model);
 
@@ -165,14 +164,47 @@ public class Accounts {
         try {
             // Convert the amount to a numerical value (assuming it's a string)
             double moneyToAdd = Double.parseDouble(amount);
+            if(moneyToAdd < 0) {
+                logger.error("Negative value attempted to be added");
+                return "Fail";
+            }
 
             // Decode the name parameter
             username = URLDecoder.decode(name, "UTF-8");
 
             // Perform any necessary operations with the username
+            try(Connection connection = dataSource.getConnection()){
+                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,`to`,`from`,`time`)" + "VALUES (?,?,?,?,?,?)");
+                PreparedStatement statement = connection.prepareStatement(insertAccount);
+
+                PreparedStatement idStatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
+                idStatement.setString(1, username);
+                ResultSet set = idStatement.executeQuery();
+                set.next();
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm");
+                LocalDateTime ldt = LocalDateTime.now();
+                dtf.format(ldt);
+
+                statement.setString(1, UUID.randomUUID().toString());
+                statement.setString(2, "Transfer");
+                statement.setDouble(3, moneyToAdd);
+                statement.setString(4, set.getString(1));
+                statement.setString(5, "01234567-89ab-cdef-ghij-scot-bank-000000000000");
+                statement.setString(6,ldt.toString());
+                statement.executeUpdate();
+
+                idStatement.close();
+                statement.close();
+            }catch (SQLException e){
+                // If something does go wrong this will log the stack trace
+                logger.error("Database Error Occurred", e);
+                // And return a HTTP 500 error to the requester
+                throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
+            }
 
             // Return a success message
-            return amount;
+            return "success";
         } catch (NumberFormatException e) {
             // If the amount is not a valid number
             e.printStackTrace(); // Log the error
@@ -252,19 +284,6 @@ public class Accounts {
     }
 
 
-    private double[] getIncome() {
-        double income[] = new double[12];
-
-
-        return income;
-    }
-
-    private double[] getSpending() {
-        double spend[] = new double[12];
-
-
-        return spend;
-    }
 
     @GET("/income/{username}")
     public double income(@PathParam String username) {
