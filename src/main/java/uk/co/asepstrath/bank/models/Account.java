@@ -110,7 +110,9 @@ public class Account {
             }
             valid = p.checkID(allTransactions, thisTransactionID);
         }
+        System.out.println(thisTransactionID);
         Transactions thisTransaction = new Transactions(timeStamp, pot.doubleValue(), id, thisTransactionID, name, "Saving pot reclaim");
+        myTransactions.add(thisTransaction);
         dec = dec.add(pot);
         pot = BigDecimal.ZERO;
     }
