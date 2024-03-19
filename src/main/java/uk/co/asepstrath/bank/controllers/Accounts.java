@@ -152,9 +152,6 @@ public class Accounts {
         }
         model.put("bal", bal);
 
-        if (username.equals("Manager")) {
-            return new ModelAndView("managerView.hbs", model);
-        }
 
         return new ModelAndView("home.hbs", model);
 
@@ -266,10 +263,9 @@ public class Accounts {
         return spend;
     }
 
-    @GET("/income/{username}")
-    public double income(@PathParam String username) {
-        double incomeData = 0.0;
-        ArrayList<Account> accounts = HelperMethods.getAccountList();
+    @GET("/withdrawals/{username}")
+    public double getWithdrawals(@PathParam String username) {
+        double withdrawData = 0.0;
 
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement IDstatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
@@ -278,22 +274,100 @@ public class Accounts {
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
             String id = set.getString("AccountId");
 
-            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_income FROM `Transaction` WHERE `type` = 'Deposit'"); //or collect roundups
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_withdrawals FROM `Transaction` WHERE `type` = 'WITHDRAWAL' AND `from` = ?");
+            statement.setString(1,id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                incomeData = resultSet.getDouble("total_income");
+                withdrawData = resultSet.getDouble("total_withdrawals");
             }
         } catch (SQLException e) {
             logger.error("Error occurred while fetching income data", e);
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching income data");
         }
-        System.out.println(incomeData);
-        return incomeData;
+        System.out.println(withdrawData);
+        return withdrawData;
     }
 
-    @GET("/outgoing/{username}")
-    public double outgoing(@PathParam String username) {
-        double totalOutgoing = 0.0;
+    @GET("/payments/{username}")
+    public double getPayments(@PathParam String username) {
+        double totalPayments = 0.0;
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement IDstatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
+            IDstatement.setString(1, username);
+            ResultSet set = IDstatement.executeQuery();
+            if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
+            String id = set.getString("AccountId");
+
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_payments FROM `Transaction` WHERE `type` = 'PAYMENT' AND `from` = ?");
+            statement.setString(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                totalPayments = resultSet.getDouble("total_payments");
+            }
+        } catch (SQLException e) {
+            logger.error("Error occurred while fetching outgoing data", e);
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
+        }
+        System.out.println(totalPayments);
+        return totalPayments;
+    }
+
+    @GET("/deposits/{username}")
+    public double getDeposits(@PathParam String username) {
+        double totalDepos = 0.0;
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement IDstatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
+            IDstatement.setString(1, username);
+            ResultSet set = IDstatement.executeQuery();
+            if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
+            String id = set.getString("AccountId");
+
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_deposits FROM `Transaction` WHERE `type` = 'DEPOSIT' AND `to` = ?");
+            statement.setString(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                totalDepos = resultSet.getDouble("total_deposits");
+            }
+        } catch (SQLException e) {
+            logger.error("Error occurred while fetching outgoing data", e);
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
+        }
+        System.out.println(totalDepos);
+        return totalDepos;
+    }
+
+    @GET("/transfers/{username}")
+    public double getTransfersTo(@PathParam String username) {
+        double totalTransfers = 0.0;
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement IDstatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
+            IDstatement.setString(1, username);
+            ResultSet set = IDstatement.executeQuery();
+            if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
+            String id = set.getString("AccountId");
+
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_transfers FROM `Transaction` WHERE `type` = 'TRANSFER' AND `to` = ? OR `from` = ?");
+            statement.setString(1, id);
+            statement.setString(2, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                totalTransfers = resultSet.getDouble("total_transfers");
+            }
+        } catch (SQLException e) {
+            logger.error("Error occurred while fetching outgoing data", e);
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
+        }
+        System.out.println(totalTransfers);
+        return totalTransfers;
+    }
+
+
+    @GET("/collectRoundUps/{username}")
+    public double collectRound(@PathParam String username) {
+        double totalRoundsCollected = 0.0;
         ArrayList<Account> accounts = HelperMethods.getAccountList();
 
         try (Connection connection = dataSource.getConnection()) {
@@ -303,47 +377,21 @@ public class Accounts {
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
             String id = set.getString("AccountId");
 
-            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_outgoing FROM `Transaction` WHERE `from` = ?"); //once api working change to type payment/withdrawl
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_rounds FROM `Transaction` WHERE `to` = ? AND `from` = ?");
             statement.setString(1, id);
+            statement.setString(2, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                totalOutgoing = resultSet.getDouble("total_outgoing");
+                totalRoundsCollected = resultSet.getDouble("total_rounds");
             }
         } catch (SQLException e) {
             logger.error("Error occurred while fetching outgoing data", e);
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
         }
-        System.out.println(totalOutgoing);
-        return totalOutgoing;
+        System.out.println(totalRoundsCollected);
+        return totalRoundsCollected;
     }
 
 
-    public double getOutgoing(String username) {
-        double totalOutgoing = 0.0;
-        String id = null;
-        ArrayList<Account> accounts = HelperMethods.getAccountList();
-
-        for (Account account : accounts) {
-            if (username.equals(account.getUsername())) {
-                id = account.getId();
-                break;
-            }
-        }
-
-
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_outgoing FROM Transaction WHERE `from` = ?");
-            statement.setString(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                totalOutgoing = resultSet.getDouble("total_outgoing");
-            }
-        } catch (SQLException e) {
-            logger.error("Error occurred while fetching outgoing data", e);
-            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
-        }
-        System.out.println(totalOutgoing);
-        return totalOutgoing;
-    }
 
 }

@@ -153,7 +153,7 @@ public class App extends Jooby {
                     + "VALUES (?,?,?,?)");
             String sql = "SELECT * FROM Customer";
             ResultSet rs = stmt.executeQuery(sql);
-             */
+            */
 
 
             ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
