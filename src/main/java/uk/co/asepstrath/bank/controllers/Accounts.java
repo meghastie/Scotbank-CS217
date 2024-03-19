@@ -38,13 +38,6 @@ public class Accounts {
 
     }
 
-    /*@GET("/home")
-    public ModelAndView home() {
-        Map<String, Object> model = new HashMap<>();
-        model.put("name", "luke");
-
-        return new ModelAndView("home.hbs",model);
-    }*/
 
     @GET("/accounts")
     public String sayHi() {
@@ -91,7 +84,7 @@ public class Accounts {
 
             bal = HelperMethods.getCurrentBalance(id, dataSource);
 
-            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ? ORDER BY amount DESC");
+            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ?  LIMIT 3");
             recentTransactionsStatement.setString(1, id);
             recentTransactionsStatement.setString(2, id);
             ResultSet recentTransactionsResultSet = recentTransactionsStatement.executeQuery();
@@ -159,14 +152,45 @@ public class Accounts {
         }
         model.put("bal", bal);
 
+        if (username.equals("Manager")) {
+            return new ModelAndView("managerView.hbs", model);
+        }
 
         return new ModelAndView("home.hbs", model);
 
     }
+    @POST("/testAddMoney")
+    public String addMoney(@FormParam("amount") String amount, @FormParam("name") String name) {
+        String username;
+        try {
+            // Convert the amount to a numerical value (assuming it's a string)
+            double moneyToAdd = Double.parseDouble(amount);
+
+            // Decode the name parameter
+            username = URLDecoder.decode(name, "UTF-8");
+
+            // Perform any necessary operations with the username
+
+            // Return a success message
+            return amount;
+        } catch (NumberFormatException e) {
+            // If the amount is not a valid number
+            e.printStackTrace(); // Log the error
+            return "Invalid amount format";
+        } catch (UnsupportedEncodingException e) {
+            // If decoding the name parameter fails
+            e.printStackTrace(); // Log the error
+            return "Error decoding name parameter";
+        } catch (Exception e) {
+            // If any other exception occurs
+            e.printStackTrace(); // Log the error
+            return "Error adding money";
+        }
+    }
+
 
     @POST("/handleButtonClick")
     public String handleButtonClick(@FormParam("username") String data) throws SQLException {
-//        HelperMethods accounts = new HelperMethods();
         String username;
         try {
             username = URLDecoder.decode(data, "UTF-8");

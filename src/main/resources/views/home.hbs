@@ -68,7 +68,7 @@
     <div class="container text-center ">
         <div class="center-content ">
             <div>
-                <img src="no_image.png" alt="no_image" height="220px" width="220px">
+                <img src="/assets/no_image.png" alt="no_image" height="220px" width="220px">
             </div>
             <div class="block1">
                 <div class="display_acc_data">
@@ -80,7 +80,7 @@
                     <h4>{{bal}}</h4>
                 </div>
                 <div>
-                    <!-- <button type="button" class="btn btn-outline-secondary btn-lg">Request money</button> -->
+                     <button type="button" class="btn btn-outline-secondary btn-lg" onclick="add_money()">Request money</button>
                     <button type="button" class="btn btn-outline-secondary btn-lg" id="submitButton" onclick="round()">Round Up</button>
                     </a>
                 </div>
@@ -135,7 +135,11 @@
                 </a>
             </div>
         </div>
+        <div class="container" style="margin-top: 30px;">
+            <button type="button" class="btn btn-outline-secondary" >See more of my transactions</button>
+        </div>
     </div>
+
     <div class="transaction_stats container">
         <span>
             <h2>Transaction Statistics</h2>
@@ -152,6 +156,27 @@
 
 
 <script>
+   var nameValue = "{{name}}";
+    console.log(nameValue);
+function add_money(){
+    var entry = prompt("How much money do you want to add?");
+    // Perform the fetch request when the button is clicked
+    fetch("/bank/testAddMoney", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "amount=" + encodeURIComponent(entry) + "&name=" + encodeURIComponent(nameValue)
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data); // Output the response from the server
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+    console.log(entry);
+}
     /*
     // Example Data - need an array with users income and spending
     var incomeData = [5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000];
@@ -188,8 +213,7 @@
     });
      */
 
-    var nameValue = "{{name}}";
-    console.log(nameValue);
+
 
     // Fetch outgoing data first
     var outgoingPromise = fetch("/bank/outgoing/" + encodeURIComponent(nameValue))
