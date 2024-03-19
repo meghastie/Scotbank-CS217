@@ -9,28 +9,30 @@ import uk.co.asepstrath.bank.services.XmlParser;
 import javax.sql.DataSource;
 
 
-@Path("/bank")
+@Path("/bank2")
 public class TransactionController {
 
 
         private final DataSource dataSource;
         private final Logger logger;
-    private final XmlParser xmlParser;
     private Transactions transactions;
 
 
-    public TransactionController(DataSource dataSource, Logger logger, XmlParser  xmlParser ) {
+    public TransactionController(DataSource dataSource, Logger logger ) {
         this.dataSource = dataSource;
         this.logger = logger;
-        this.xmlParser = xmlParser;
+        //this.xmlParser = xmlParser;
 
 
     }
 
-    @GET("/transactions")
+    @GET("/transaction")
         public String showAccount() {
-            return xmlParser.Parser();
+            return "hi9";
         }
+
+
+
 
 
 }

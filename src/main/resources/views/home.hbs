@@ -16,12 +16,12 @@
 <style>
     body{
         background: hsla(0, 12%, 91%, 1);
-    background: linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
-    background: -moz-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
-    background: -webkit-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
+        background: linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
+        background: -moz-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
+        background: -webkit-linear-gradient(135deg, hsla(0, 12%, 91%, 1) 0%, hsla(191, 29%, 88%, 1) 51%, hsla(276, 39%, 84%, 1) 100%);
 
-    background-size: cover;
-    text-align: center;
+        background-size: cover;
+        text-align: center;
 
     }
     .carousel-control-prev, .carousel-control-next{
@@ -32,37 +32,38 @@
         text-decoration: none;
         color: black;
     }
-.transactionContainer{
-    margin-bottom: 90px;
-}
-.balance_available{
-    /* width: 30%; */
-    text-align: center;
-    display: flex;
-    align-self: center;
-  justify-content: space-around;
-  margin: 0 auto;
-  margin-bottom: 10px;
-}
-.display_acc_data{
-    display: flex;
-    justify-content: space-around;
-    /* width: 40%; */
-    margin: 0 auto;
-    margin-top: 20px ;
-    margin-bottom: 50px;
-    align-items: center;
-    vertical-align: middle;
-}
-.block1{
-    border: 1px solid  rgba(0, 0, 0, 0.099);
-    height: 270px;
-    margin: auto;
-    width: 50%;
-    border-radius: 20px;
-    background-color: rgba(0, 0, 0, 0.099);
-}
+    .transactionContainer{
+        margin-bottom: 90px;
+    }
+    .balance_available{
+        /* width: 30%; */
+        text-align: center;
+        display: flex;
+        align-self: center;
+        justify-content: space-around;
+        margin: 0 auto;
+        margin-bottom: 10px;
+    }
+    .display_acc_data{
+        display: flex;
+        justify-content: space-around;
+        /* width: 40%; */
+        margin: 0 auto;
+        margin-top: 20px ;
+        margin-bottom: 50px;
+        align-items: center;
+        vertical-align: middle;
+    }
+    .block1{
+        border: 1px solid  rgba(0, 0, 0, 0.099);
+        height: 270px;
+        margin: auto;
+        width: 50%;
+        border-radius: 20px;
+        background-color: rgba(0, 0, 0, 0.099);
+    }
 </style>
+<div id="responseMessage"></div>
 <div class="main">
     <div class="container text-center ">
         <div class="center-content ">
@@ -73,13 +74,15 @@
                 <div class="display_acc_data">
                     <h2 style = "">Hello {{name}}</h2>
                 </div>
-                <p style = "font-size: 15px; margin-bottom: 30px;">accNo sortCode</p> <!-- add handlebars -->
+                <!-- <p style = "font-size: 15px; margin-bottom: 30px;">accNo sortCode</p> -->
                 <div class="balance_available">
                     <h4>Available Balance:</h4>
-                    <h4>100</h4>
+                    <h4>{{bal}}</h4>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-outline-secondary btn-lg">Request money</button>
+                    <!-- <button type="button" class="btn btn-outline-secondary btn-lg">Request money</button> -->
+                    <button type="button" class="btn btn-outline-secondary btn-lg" id="submitButton" onclick="round()">Round Up</button>
+                    </a>
                 </div>
             </div>
 
@@ -97,7 +100,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Transaction 1</h5>
-                            <p class="card-text">Amount: {{amount}} Type: {{type}}</p>
+                            <p class="card-text">Amount: {{amount1}} Type: {{type1}}</p>
 
 
                         </div>
@@ -107,7 +110,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Transaction 2</h5>
-                            <p class="card-text">Amount: {{amount}} Type: {{type}}</p>
+                            <p class="card-text">Amount: {{amount2}} Type: {{type2}}</p>
 
                         </div>
                     </div>
@@ -116,7 +119,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Transaction 3</h5>
-                            <p class="card-text">Amount: {{amount}} Type: {{type}}</p>
+                            <p class="card-text">Amount: {{amount3}} Type: {{type3}}</p>
 
                         </div>
                     </div>
@@ -140,41 +143,163 @@
         <canvas id="incomeSpendingChart" class="mx-auto" style=" display: block;" width="1000%" height="500px" ></canvas>
 
     </div>
+        <p style = "margin-top: 40px; margin-bottom: 40px;">Don't see anything? Not to worry! Once you make your first transaction / receive your first payment the chart will be automatically updated.</p>
 </div>
+
+
+
+
+
+
 <script>
-            // Example Data - need an array with users income and spending
-            var incomeData = [5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000];
-            var spendingData = [3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500];
+    /*
+    // Example Data - need an array with users income and spending
+    var incomeData = [5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000];
+    var spendingData = [3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500];
 
-            // Create Chart
-            var ctx = document.getElementById('incomeSpendingChart').getContext('2d');
-            var myBarChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                    datasets: [
-                        {
-                            label: 'Income',
-                            backgroundColor: 'rgba(255, 105, 180, 0.5)',
-                            borderColor: 'rgba(255, 105, 180, 1)',
-                            borderWidth: 1,
-                            data: incomeData //replace with our income array
-                        },
-                        {
-                            label: 'Spending',
-                            backgroundColor: 'rgba(128, 0, 128, 0.5)',
-                            borderColor: 'rgba(128, 0, 128, 1)',
-                            borderWidth: 1,
-                            data: spendingData //replace with our income array
-                        }
-                    ]
+    // Create Chart
+    var ctx = document.getElementById('incomeSpendingChart').getContext('2d');
+    var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            datasets: [
+                {
+                    label: 'Income',
+                    backgroundColor: 'rgba(255, 105, 180, 0.5)',
+                    borderColor: 'rgba(255, 105, 180, 1)',
+                    borderWidth: 1,
+                    data: incomeData //replace with our income array
                 },
-                options: {
-                    responsive: false,
-                    maintainAspectRatio: true,
-
+                {
+                    label: 'Spending',
+                    backgroundColor: 'rgba(128, 0, 128, 0.5)',
+                    borderColor: 'rgba(128, 0, 128, 1)',
+                    borderWidth: 1,
+                    data: spendingData //replace with our income array
                 }
+            ]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: true,
+
+        }
+    });
+     */
+
+    var nameValue = "{{name}}";
+    console.log(nameValue);
+
+    // Fetch outgoing data first
+    var outgoingPromise = fetch("/bank/outgoing/" + encodeURIComponent(nameValue))
+            .then(response => response.text())
+            .catch(error => {
+                console.error("Error fetching outgoing data:", error);
+                return 0; // Return 0 if outgoing data cannot be fetched
             });
-        </script>
+
+
+    // Fetch income data
+    var incomePromise = fetch("/bank/income/" + encodeURIComponent(nameValue))
+            .then(response => response.text())
+            .catch(error => {
+                console.error("Error fetching income data:", error);
+                return 0; // Return 0 if income data cannot be fetched
+            });
+
+    // Once both promises resolve, update the chart with fetched data
+    Promise.all([outgoingPromise, incomePromise])
+            .then(([outgoingData, incomeData]) => {
+                updateChart(incomeData, outgoingData);
+            })
+            .catch(error => console.error("Error fetching data:", error));
+
+    function updateChart(incomeData, outgoingData) {
+        console.log("Updating chart with income data:", incomeData);
+        console.log("Updating chart with outgoing data:", outgoingData);
+
+        // Create Chart
+        var ctx = document.getElementById('incomeSpendingChart').getContext('2d');
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Total"],
+                datasets: [
+                    {
+                        label: 'Income',
+                        backgroundColor: 'rgba(255, 105, 180, 0.5)',
+                        borderColor: 'rgba(255, 105, 180, 1)',
+                        borderWidth: 1,
+                        data: [incomeData], // Use an array to hold income data
+                        barPercentage: 0.8,
+                    },
+                    {
+                        label: 'Spending',
+                        backgroundColor: 'rgba(128, 0, 128, 0.5)',
+                        borderColor: 'rgba(128, 0, 128, 1)',
+                        borderWidth: 1,
+                        data: [outgoingData], // Use an array to hold outgoing data
+                        barPercentage: 0.8,
+                    }
+                ]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        suggestedMax: 200
+                    }
+                }
+            }
+        });
+
+    }
+
+
+    var roundUpEnabled = false;
+
+    function toggleRoundUp() {
+        roundUpEnabled = !roundUpEnabled; // Toggle the status
+
+        // Show alert based on the roundUpEnabled status
+        if (roundUpEnabled) {
+            alert("Round Up has been enabled");
+        } else {
+            alert("Round Up has been disabled");
+        }
+    }
+
+// Get the button element
+const button = document.getElementById("submitButton");
+
+// Add a click event listener to the button
+button.addEventListener("click", function() {
+var nameValue = "{{name}}";
+    // Perform the fetch request when the button is clicked
+    fetch("/bank/handleButtonClick", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body:  "username=" + encodeURIComponent(nameValue)
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data); // Output the response from the server
+        toggleRoundUp();
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
+
+
+
+
+
+</script>
 </body>
 </html>
+

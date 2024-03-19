@@ -36,22 +36,9 @@ public class Account {
         pot = BigDecimal.ZERO;
     }
 
-    public Account(String name, String acc, String sort, String card, String cv,  String user, String pass, int amount){
-        this.name = name;
-        setAccountNumber(acc);
-        setCardNumber(card);
-        setCVC(cv);
-        username = user;
-        password = pass;
-        dec = BigDecimal.valueOf(amount);
-
-    }
-
     public String getName(){ return name; }
 
     public String toString(){
-        System.out.println("______________________________ATTENTION TESTING BIG DEC _______________________________________");
-        System.out.println(dec);
         return name + " - " + dec.toString();
     }
 
@@ -127,9 +114,10 @@ public class Account {
 
     public void withdraw(double money){
         dec = dec.subtract(BigDecimal.valueOf(money));
-        /*if(dec.doubleValue()<0){
+        if(dec.doubleValue()<0){
+            dec.add(BigDecimal.valueOf(money));
             throw new ArithmeticException();
-        }*/
+        }
     }
     public ArrayList<Transactions> getMyTransactions(){ return myTransactions; }
     public String getAccNum(){ return accNum; }
@@ -187,6 +175,10 @@ public class Account {
         }
     }
 
-
+    public boolean roundUpEnabled() {
+        return roundUpEnabled;
+    }
 }
+
+
 
