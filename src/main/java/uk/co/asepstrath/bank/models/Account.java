@@ -41,6 +41,13 @@ public class Account {
     public String toString(){
         return name + " - " + dec.toString();
     }
+    public boolean isRoundUpEnabled() {
+        if (roundUpEnabled) {
+            return true;
+        }
+        return false;
+    }
+
 
     public void roundUpSwitch(){roundUpEnabled = !roundUpEnabled;}
     public boolean myTranaction(Transactions t){
