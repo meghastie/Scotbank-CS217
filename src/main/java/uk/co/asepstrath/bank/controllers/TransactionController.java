@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@Path("/bank2")
+@Path("/manager")
 public class TransactionController {
 
 
@@ -83,6 +83,30 @@ public class TransactionController {
         List<Transactions> transactions = XmlParser.Parser();
         System.out.println(transactions);
         model.put("transactions", transactions);
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `Transaction` WHERE `type`='PAYMENT' ORDER BY amount DESC LIMIT 5");
+            ResultSet set = stmt.executeQuery();
+            ArrayList<Transactions> transactions1 = new ArrayList<>();
+            while (set.next()) {
+                Transactions transaction = new Transactions(
+                        set.getString("time"),
+                        set.getDouble("amount"),
+                        set.getString("from"),
+                        set.getString("transactionID"),
+                        set.getString("to"),
+                        set.getString("Type")
+                );
+                transactions1.add(transaction);
+            }
+            model.put("transactions1", transactions1); // Change key to "transactions"
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log the exception for debugging
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
         return new ModelAndView("transactions.hbs", model);
     }
 }

@@ -53,36 +53,14 @@
 
 </style>
 
-<h1>All Accounts</h1>
+<h1>{{name}}'s transactions</h1>
 <div id="accountsTable">
     <h2>Transactions</h2>
-    <h3>Top spenders: </h3>
+
     <table>
         <thead>
         <tr>
-            <th>From</th>
-            <th>To</th>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Time</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{#each transactions1}}
-            <tr>
-                <td>{{this.from}}</td>
-                <td>{{this.to}}</td>
-                <td>{{this.type}}</td>
-                <td>{{this.amount}}</td>
-                <td>{{this.time}}</td>
-            </tr>
-        {{/each}}
-        </tbody>
-    </table>
-    </br> </br>
-    <table>
-        <thead>
-        <tr>
+<!--            <th>ID</th>-->
             <th>From</th>
             <th>To</th>
             <th>Type</th>
@@ -93,6 +71,7 @@
         <tbody>
         {{#each transactions}}
             <tr>
+<!--                <td>{{this.id}}</td>-->
                 <td>{{this.from}}</td>
                 <td>{{this.to}}</td>
                 <td>{{this.type}}</td>

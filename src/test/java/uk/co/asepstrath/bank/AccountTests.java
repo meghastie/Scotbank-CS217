@@ -158,6 +158,10 @@ public class AccountTests {
         assertNull(a.getCardNumber());
     }
 
+    @Test
+    public void roundUpEnabled(){
+        assertFalse(a.roundUpEnabled());
+    }
 
 
 
