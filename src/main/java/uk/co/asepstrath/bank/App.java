@@ -84,21 +84,7 @@ public class App extends Jooby {
                     //+ "FOREIGN KEY (`customerName`) REFERENCES `Customer`(`customerName`)"
                     + ")");
 
-            /*
-                    //not being used right now
 
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Account` ("
-                    + "`sortCode` integer NOT NULL,"
-                    + "`accNum` integer NOT NULL,"
-                    + "`AccountType` varchar(45) NOT NULL,"
-                    + "`balance` integer NOT NULL,"
-                    + "`openDate` date NOT NULL,"
-                    + "`cardNumber` integer NOT NULL,"
-                    + "`username` varchar(255) NOT NULL,"
-                    + "PRIMARY KEY (`accNum`, `sortCode`)," //users may have the same account no OR sort code, but never 2 customers with the same acc no AND sort code
-                    + "FOREIGN KEY (`username`) REFERENCES `Customer`(`username`)"
-                    + ")");
-             */
 
 
             //populates Account database
@@ -118,7 +104,7 @@ public class App extends Jooby {
 
 
 
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
+                stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `Transaction`"
                     + "(`transactionID` varchar(50) NOT NUll,"
                     + "`Type` varchar(15) NOT NULL,"
                     + "`amount` double NOT NULL,"

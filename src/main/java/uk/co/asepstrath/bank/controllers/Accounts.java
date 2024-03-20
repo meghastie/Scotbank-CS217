@@ -18,6 +18,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 
 @Path("/bank")
@@ -74,6 +75,7 @@ public class Accounts {
         double bal = 0;
 
         if (username.equals("Manager")) {
+
             return new ModelAndView("managerView.hbs", model);
         }
 
@@ -86,7 +88,7 @@ public class Accounts {
 
             bal = HelperMethods.getCurrentBalance(id, dataSource);
 
-            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ? ORDER BY `amount` DESC LIMIT 3");
+            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ?  LIMIT 3");
             recentTransactionsStatement.setString(1, id);
             recentTransactionsStatement.setString(2, id);
             ResultSet recentTransactionsResultSet = recentTransactionsStatement.executeQuery();
@@ -413,6 +415,60 @@ public class Accounts {
         System.out.println(totalRoundsCollected);
         return totalRoundsCollected;
     }
+
+
+    @GET("/display_user_transactions")
+    public ModelAndView displayUserTransactions(@QueryParam("username") String user) {
+        Map<String, Object> model = new HashMap<>();
+        String username;
+
+        try {
+            username = URLDecoder.decode(user, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            username = user;
+        }
+        ArrayList<Account> accounts = HelperMethods.getAccountList();
+
+        String userID = "";
+        for (Account account : accounts) {
+            if (account.getName().equals(username)) {
+                System.out.println("WE FOUND IT");
+                userID = account.getId().toString();
+                break; // No need to continue once found
+            }
+        }
+        System.out.println("CHECK THIS OUT " + userID);
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `Transaction` WHERE `from` = ? OR `to` = ?");
+            stmt.setString(1, userID);
+            stmt.setString(2, userID);
+            ResultSet set = stmt.executeQuery();
+            ArrayList<Transactions> transactions = new ArrayList<>();
+            while (set.next()) {
+                Transactions transaction = new Transactions(
+                        set.getString("time"),
+                        set.getDouble("amount"),
+                        set.getString("from"),
+                        set.getString("transactionID"),
+                        set.getString("to"),
+                        set.getString("Type")
+                );
+                transactions.add(transaction);
+            }
+            model.put("transactions", transactions); // Change key to "transactions"
+            model.put("name", username);
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log the exception for debugging
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        return new ModelAndView("user_transaction.hbs", model);
+    }
+
 
 
 
