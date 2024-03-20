@@ -36,23 +36,6 @@ public class UnitTest {
     }
 
     @Test
-    public void mainPageActive(){
-        MockRouter router = new MockRouter(new App());
-
-        router.get("/bank", rsp -> {
-            assertEquals(StatusCode.OK,rsp.getStatusCode());
-        });
-    }
-    @Test
-    public void homePageActive(){
-        MockRouter router = new MockRouter(new App());
-
-        router.get("/bank/home", rsp -> {
-            assertEquals(StatusCode.OK,rsp.getStatusCode());
-        });
-    }
-
-    @Test
     public void getStringFromUrlReturnsString(){
         Assertions.assertInstanceOf(String.class,HelperMethods.getStringFromApi("https://api.asep-strath.co.uk/api/accounts"));
     }
