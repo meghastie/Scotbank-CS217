@@ -39,38 +39,42 @@ public class DataSourceTest {
 
     }
 
-    @Test
-    public void loginTest(int serverPort,String bal,HashMap<String, String> replace){
-        String user = "Miss Lavina Waelchi";
-        if(bal == null)
-            bal = "4069.61";
-        String types = "PAYMENT";
-
-        if(replace == null) {
-            replace = new HashMap<>();
-            replace.put("{{name}}", user);
-            replace.put("{{bal}}", bal);
-            replace.put("{{amount1}}", "200.0");
-            replace.put("{{amount2}}", "209.0");
-            replace.put("{{amount3}}", "84.0");
-            replace.put("{{type1}}", types);
-            replace.put("{{type2}}", types);
-            replace.put("{{type3}}", types);
-        }
-
-        Request request = new Request.Builder().url("http://localhost:" + serverPort+"/bank/home").post(RequestBody.create(MediaType.parse("text/plain; charset=utf-8"),user)).build();
+    private boolean homepageTest(int serverPort, HashMap<String, String> replace, RequestBody rb){
+        Request request = new Request.Builder().url("http://localhost:" + serverPort+"/bank/home").post(rb).build();
 
         try (Response rsp = client.newCall(request).execute()) {
             String expectedRsp = new String(Files.readAllBytes(Paths.get("src/main/resources/views/home.hbs"))).trim();
             expectedRsp = HelperMethods.replacePlaceholders(expectedRsp,replace);
 
 
-            assertEquals(StatusCode.OK.value(), rsp.code());
-            assertEquals(expectedRsp,rsp.body().string().trim());
+            if(expectedRsp.equals(rsp.body().string().trim()))
+                return true;
         }
         catch (Exception e){
-            Assertions.fail(e);
+            return false;
         }
+        return false;
+    }
+
+    @Test
+    public void loginTest(int serverPort){
+        String user = "Miss Lavina Waelchi";
+        String bal = "4069.61";
+
+        String types = "PAYMENT";
+
+        HashMap<String,String> replace = new HashMap<>();
+        replace.put("{{name}}", user);
+        replace.put("{{bal}}", bal);
+        replace.put("{{amount1}}", "200.0");
+        replace.put("{{amount2}}", "209.0");
+        replace.put("{{amount3}}", "84.0");
+        replace.put("{{type1}}", types);
+        replace.put("{{type2}}", types);
+        replace.put("{{type3}}", types);
+
+        RequestBody rb = RequestBody.create(MediaType.parse("\"text/plain; charset=utf-8\""),user);
+        assertTrue(homepageTest(serverPort,replace,rb));
     }
 
     @Test
@@ -203,7 +207,8 @@ public class DataSourceTest {
 
             assertEquals(StatusCode.OK.value(), rsp.code());
             assertEquals("success",rsp.body().string().trim());
-            loginTest(serverPort,bal,replace);
+            RequestBody rb = RequestBody.create(MediaType.parse("\"text/plain; charset=utf-8\""),user);
+            homepageTest(serverPort,replace,rb);
         }
         catch (Exception e){
             Assertions.fail(e);

@@ -185,7 +185,7 @@ public class AccountTests {
     }
 
     @Test
-    public void roundUpEnabled(){
+    public void roundUpEnabledForA(){
         assertFalse(a.roundUpEnabled());
     }
 
