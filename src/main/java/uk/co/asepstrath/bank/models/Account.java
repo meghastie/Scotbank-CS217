@@ -41,12 +41,7 @@ public class Account {
     public String toString(){
         return name + " - " + dec.toString();
     }
-    public boolean isRoundUpEnabled() {
-        if (roundUpEnabled) {
-            return true;
-        }
-        return false;
-    }
+
 
 
     public void roundUpSwitch(){roundUpEnabled = !roundUpEnabled;}
@@ -173,14 +168,7 @@ public class Account {
             cardNumber = card;
         }
     }
-    public void changePassword(String current, String newpass){
-        if(current.equals(password)){
-            password = newpass;
-        }
-        else{
-            System.out.println("Wrong password");
-        }
-    }
+
 
     public boolean roundUpEnabled() {
         return roundUpEnabled;

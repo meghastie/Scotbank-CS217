@@ -12,6 +12,7 @@ public class AccountTests {
     Account b;
     Transactions t;
     Transactions f;
+    Transactions c;
 
     @BeforeEach
     public void setUp(){
@@ -19,7 +20,32 @@ public class AccountTests {
         b = new Account("1", "mum", 0, true);
         t = new Transactions("21/02/24",53.64,"1","123456","0", "donation");
         f = new Transactions("21/02/24",66.89,"0","123456","1", "donation");
+        c = new Transactions("21/03/24",50.0,"50","40", "30","testing");
     }
+    @Test
+    public void roundUpEnabled(){
+        assertTrue(b.roundUpEnabled());
+    }
+    @Test
+    public void noTransaction(){
+        assertFalse(a.myTranaction(c));
+    }
+    @Test
+    public void roundUpSwitch(){
+        b.roundUpSwitch();
+        assertFalse(b.roundUpEnabled());
+    }
+    @Test
+    public void roundUpDisabled(){
+        assertFalse(a.roundUpEnabled());
+    }
+    @Test
+    public void setName(){
+        a.setName("test");
+        assertEquals(a.getName(),"test");
+    }
+
+
     @Test
     public void minusBalance(){
         a.deposit(100);
@@ -82,12 +108,12 @@ public class AccountTests {
         assertTrue(a.getBalance() == 20);
 
     }
-    /*@Test
+    @Test
     public void overdraft(){
         a.deposit(30);
         Assertions.assertThrows(ArithmeticException.class,() -> a.withdraw(100));
 
-    }*/
+    }
 
     @Test
     public void superSaving(){

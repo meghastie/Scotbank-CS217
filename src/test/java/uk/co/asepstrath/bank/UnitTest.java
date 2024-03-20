@@ -43,6 +43,14 @@ public class UnitTest {
             assertEquals(StatusCode.OK,rsp.getStatusCode());
         });
     }
+    @Test
+    public void homePageActive(){
+        MockRouter router = new MockRouter(new App());
+
+        router.get("/bank/home", rsp -> {
+            assertEquals(StatusCode.OK,rsp.getStatusCode());
+        });
+    }
 
     @Test
     public void getStringFromUrlReturnsString(){
