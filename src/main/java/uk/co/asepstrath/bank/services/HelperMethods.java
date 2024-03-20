@@ -7,11 +7,15 @@ import uk.co.asepstrath.bank.models.Account;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HelperMethods {
 
@@ -41,30 +45,55 @@ public class HelperMethods {
     }
 
     public static double getCurrentBalance(String id,DataSource ds){
-        double balance = -9999.0;
+        double balance = getAccountFromList(id).getStartingBalance();
         try(Connection connection = ds.getConnection()){
-            PreparedStatement stmt = connection.prepareStatement("SELECT SUM(`amount`) AS `total` FROM `Transaction` WHERE `to` = ?");
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Transaction WHERE `to` = ? OR `from` = ?");
             stmt.setString(1,id);
+            stmt.setString(2,id);
 
-
-            ResultSet totalTo = stmt.executeQuery();
-
-            stmt = connection.prepareStatement("SELECT SUM(amount) FROM `Transaction` WHERE `from` = ?");
-            stmt.setString(1,id);
-            ResultSet totalFrom = stmt.executeQuery();
-
-            stmt = connection.prepareStatement("SELECT `startingbalance` FROM `AccountList` WHERE `AccountId` = ?");
-            stmt.setString(1,id);
-            ResultSet startingBal = stmt.executeQuery();
-
-            if (!totalTo.next() || !totalFrom.next() || !startingBal.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Something doesn't work");
-
-            balance =  BigDecimal.valueOf(startingBal.getDouble(1)).add(BigDecimal.valueOf(totalTo.getDouble(1))).subtract(BigDecimal.valueOf(totalFrom.getDouble(1))).doubleValue();
+            ResultSet result = stmt.executeQuery();
+            while(result.next()){
+                if(result.getString("Type").equals("PAYMENT")){
+                    balance -= result.getDouble("amount");
+                } else if (result.getString("Type").equals("TRANSFER")) {
+                    if(result.getString("to").equals("635e583f-0af2-47cb-9625-5b66ba30e188"))
+                        balance += result.getDouble("amount");
+                    else
+                        balance -= result.getDouble("amount");
+                } else if (result.getString("Type").equals("DEPOSIT")) {
+                    balance += result.getDouble("amount");
+                } else if (result.getString("Type").equals("WITHDRAWAL")) {
+                    if (balance - result.getDouble("amount") >= 0)
+                        balance -= result.getDouble("amount");
+                } else {    //collect round up
+                    balance += result.getDouble("amount");
+                }
+            }
 
             stmt.close();
-            return balance;
+            return (BigDecimal.valueOf(balance).setScale(2, RoundingMode.HALF_EVEN).doubleValue());
         }catch(Exception e){
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
         }
+    }
+
+    public static String replacePlaceholders(String content, Map<String, String> placeholders) {
+        for (Map.Entry<String, String> row : placeholders.entrySet()) {
+            String placeholder = Pattern.quote(row.getKey());
+            String replacement = Matcher.quoteReplacement(row.getValue());
+            content = content.replaceAll(placeholder, replacement);
+        }
+        return content;
+    }
+
+    public static Account getAccountFromList(String nameOrId){
+        ArrayList<Account> accounts = getAccountList();
+
+        for(Account a:accounts){
+            if(a.getId().equals(nameOrId) || a.getName().equals(nameOrId))
+                return a;
+        }
+
+        return null;
     }
 }

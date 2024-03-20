@@ -169,6 +169,16 @@ public class Account {
         }
     }
 
+    /*
+    public void changePassword(String current, String newpass){
+        if(current.equals(password)){
+            password = newpass;
+        }
+        else{
+            System.out.println("Wrong password");
+        }
+    }
+     */
 
     public boolean roundUpEnabled() {
         return roundUpEnabled;

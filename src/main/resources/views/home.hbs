@@ -68,7 +68,7 @@
     <div class="container text-center ">
         <div class="center-content ">
             <div>
-                <img src="no_image.png" alt="no_image" height="220px" width="220px">
+                <img src="/assets/no_image.png" alt="no_image" height="220px" width="220px">
             </div>
             <div class="block1">
                 <div class="display_acc_data">
@@ -80,7 +80,7 @@
                     <h4>{{bal}}</h4>
                 </div>
                 <div>
-                    <!-- <button type="button" class="btn btn-outline-secondary btn-lg">Request money</button> -->
+                     <button type="button" class="btn btn-outline-secondary btn-lg" onclick="add_money()">Request money</button>
                     <button type="button" class="btn btn-outline-secondary btn-lg" id="submitButton" onclick="round()">Round Up</button>
                     </a>
                 </div>
@@ -135,15 +135,19 @@
                 </a>
             </div>
         </div>
+        <div class="container" style="margin-top: 30px;">
+            <button type="button" class="btn btn-outline-secondary"  onclick="trans()">See more of my transactions</button>
+        </div>
     </div>
+
     <div class="transaction_stats container">
         <span>
-            <h2>Transaction Statistics</h2>
+            <h2>Overall Transaction Statistics</h2>
         </span>
         <canvas id="incomeSpendingChart" class="mx-auto" style=" display: block;" width="1000%" height="500px" ></canvas>
 
     </div>
-        <p style = "margin-top: 40px; margin-bottom: 40px;">Don't see anything? Not to worry! Once you make your first transaction / receive your first payment the chart will be automatically updated.</p>
+
 </div>
 
 
@@ -152,72 +156,102 @@
 
 
 <script>
-    /*
-    // Example Data - need an array with users income and spending
-    var incomeData = [5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000];
-    var spendingData = [3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500];
-
-    // Create Chart
-    var ctx = document.getElementById('incomeSpendingChart').getContext('2d');
-    var myBarChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets: [
-                {
-                    label: 'Income',
-                    backgroundColor: 'rgba(255, 105, 180, 0.5)',
-                    borderColor: 'rgba(255, 105, 180, 1)',
-                    borderWidth: 1,
-                    data: incomeData //replace with our income array
-                },
-                {
-                    label: 'Spending',
-                    backgroundColor: 'rgba(128, 0, 128, 0.5)',
-                    borderColor: 'rgba(128, 0, 128, 1)',
-                    borderWidth: 1,
-                    data: spendingData //replace with our income array
-                }
-            ]
-        },
-        options: {
-            responsive: false,
-            maintainAspectRatio: true,
-
-        }
-    });
-     */
-
-    var nameValue = "{{name}}";
+   var nameValue = "{{name}}";
     console.log(nameValue);
+function trans() {
+    fetch("/bank/display_user_transactions?username={{name}}", {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(data => {
+        // Redirect to the user_transactions view
+        window.location.href = '/bank/display_user_transactions?username={{name}}';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+function add_money(){
+    var entry = prompt("How much money do you want to add?");
+    // Perform the fetch request when the button is clicked
+    fetch("/bank/testAddMoney", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "amount=" + encodeURIComponent(entry) + "&name=" + encodeURIComponent(nameValue)
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data); // Output the response from the server
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+    console.log(entry);
+    location.reload();
+}
 
-    // Fetch outgoing data first
-    var outgoingPromise = fetch("/bank/outgoing/" + encodeURIComponent(nameValue))
+
+    var paymentPromise = fetch("/bank/payments/" + encodeURIComponent(nameValue))
             .then(response => response.text())
             .catch(error => {
-                console.error("Error fetching outgoing data:", error);
-                return 0; // Return 0 if outgoing data cannot be fetched
+                console.error("Error fetching payment data:", error);
+                return 0;
             });
 
 
-    // Fetch income data
-    var incomePromise = fetch("/bank/income/" + encodeURIComponent(nameValue))
+
+    var withdrawPromise = fetch("/bank/withdrawals/" + encodeURIComponent(nameValue))
             .then(response => response.text())
             .catch(error => {
-                console.error("Error fetching income data:", error);
-                return 0; // Return 0 if income data cannot be fetched
+                console.error("Error fetching withdrawal data:", error);
+                return 0;
             });
+
+   var depositPromise = fetch("/bank/deposits/" + encodeURIComponent(nameValue))
+           .then(response => response.text())
+           .catch(error => {
+               console.error("Error fetching deposit data:", error);
+               return 0;
+           });
+
+   var transferPromise = fetch("/bank/transfers/" + encodeURIComponent(nameValue))
+           .then(response => response.text())
+           .catch(error => {
+               console.error("Error fetching transfers to data:", error);
+               return 0;
+           });
+
+
+   var collectRoundsPromise = fetch("/bank/collectRoundUps/" + encodeURIComponent(nameValue))
+           .then(response => response.text())
+           .catch(error => {
+               console.error("Error fetching collected round ups data:", error);
+               return 0;
+           });
 
     // Once both promises resolve, update the chart with fetched data
-    Promise.all([outgoingPromise, incomePromise])
-            .then(([outgoingData, incomeData]) => {
-                updateChart(incomeData, outgoingData);
+    Promise.all([paymentPromise, withdrawPromise, depositPromise, transferPromise, collectRoundsPromise])
+            .then(([paymentData, withdrawData, depositData, transferData, collectedRoundsData]) => {
+                updateChart(paymentData, withdrawData, depositData, transferData, collectedRoundsData);
             })
             .catch(error => console.error("Error fetching data:", error));
 
-    function updateChart(incomeData, outgoingData) {
-        console.log("Updating chart with income data:", incomeData);
-        console.log("Updating chart with outgoing data:", outgoingData);
+    function updateChart(paymentData, withdrawData, depositData, transferData, collectedRoundsData) {
+        console.log("Updating chart with payment data:", paymentData);
+        console.log("Updating chart with income data:", withdrawData);
+        console.log("Updating chart with deposit data:", depositData);
+        console.log("Updating chart with transfers to data:", transferData);
+        console.log("Updating chart with transfer data:", collectedRoundsData);
 
         // Create Chart
         var ctx = document.getElementById('incomeSpendingChart').getContext('2d');
@@ -227,31 +261,56 @@
                 labels: ["Total"],
                 datasets: [
                     {
-                        label: 'Income',
-                        backgroundColor: 'rgba(255, 105, 180, 0.5)',
-                        borderColor: 'rgba(255, 105, 180, 1)',
-                        borderWidth: 1,
-                        data: [incomeData], // Use an array to hold income data
-                        barPercentage: 0.8,
-                    },
-                    {
-                        label: 'Spending',
+                        label: 'Payments',
                         backgroundColor: 'rgba(128, 0, 128, 0.5)',
                         borderColor: 'rgba(128, 0, 128, 1)',
                         borderWidth: 1,
-                        data: [outgoingData], // Use an array to hold outgoing data
-                        barPercentage: 0.8,
+                        data: [paymentData], // Use an array to hold outgoing data
+                        barPercentage: 0.8, // Adjust as needed
+                        categoryPercentage: 1.0 // Adjust as needed
+                    },
+                    {
+                        label: 'Withdrawals',
+                        backgroundColor: 'rgba(255, 105, 180, 0.5)',
+                        borderColor: 'rgba(255, 105, 180, 1)',
+                        borderWidth: 1,
+                        data: [withdrawData], // Use an array to hold income data
+                        barPercentage: 0.8, // Adjust as needed
+                        categoryPercentage: 1.0 // Adjust as needed
+                    },
+                    {
+                        label: 'Deposits',
+                        backgroundColor: 'rgba(255, 218, 185, 0.5)',
+                        borderColor: 'rgba(255, 218, 185, 1)',
+                        borderWidth: 1,
+                        data: [depositData], // Use an array to hold outgoing data
+                        barPercentage: 0.8, // Adjust as needed
+                        categoryPercentage: 1.0 // Adjust as needed
+                    },
+                    {
+                        label: 'Transfers To and From Account',
+                        backgroundColor: 'rgba(135, 206, 250, 0.5)',
+                        borderColor: 'rgba(135, 206, 250, 1)',
+                        borderWidth: 1,
+                        data: [transferData], // Use an array to hold outgoing data
+                        barPercentage: 0.8, // Adjust as needed
+                        categoryPercentage: 1.0 // Adjust as needed
+                    },
+                    {
+                        label: 'Collected Round-Ups',
+                        backgroundColor: 'rgba(153, 50, 204, 0.5)',
+                        borderColor: 'rgba(153, 50, 204, 1)',
+                        borderWidth: 1,
+                        data: [collectedRoundsData], // Use an array to hold outgoing data
+                        barPercentage: 0.8, // Adjust as needed
+                        categoryPercentage: 1.0 // Adjust as needed
                     }
                 ]
             },
             options: {
                 responsive: false,
                 maintainAspectRatio: true,
-                scales: {
-                    y: {
-                        suggestedMax: 200
-                    }
-                }
+
             }
         });
 

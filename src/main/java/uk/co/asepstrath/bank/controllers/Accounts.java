@@ -15,7 +15,10 @@ import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 
 @Path("/bank")
@@ -38,13 +41,6 @@ public class Accounts {
 
     }
 
-    /*@GET("/home")
-    public ModelAndView home() {
-        Map<String, Object> model = new HashMap<>();
-        model.put("name", "luke");
-
-        return new ModelAndView("home.hbs",model);
-    }*/
 
     @GET("/accounts")
     public String sayHi() {
@@ -79,6 +75,7 @@ public class Accounts {
         double bal = 0;
 
         if (username.equals("Manager")) {
+
             return new ModelAndView("managerView.hbs", model);
         }
 
@@ -91,7 +88,7 @@ public class Accounts {
 
             bal = HelperMethods.getCurrentBalance(id, dataSource);
 
-            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ? ORDER BY amount DESC");
+            PreparedStatement recentTransactionsStatement = connection.prepareStatement("SELECT `amount`, Type FROM `Transaction` WHERE `to` = ? OR `from` = ?  LIMIT 3");
             recentTransactionsStatement.setString(1, id);
             recentTransactionsStatement.setString(2, id);
             ResultSet recentTransactionsResultSet = recentTransactionsStatement.executeQuery();
@@ -163,10 +160,71 @@ public class Accounts {
         return new ModelAndView("home.hbs", model);
 
     }
+    @POST("/testAddMoney")
+    public String addMoney(@FormParam("amount") String amount, @FormParam("name") String name) {
+        String username;
+        try {
+            // Convert the amount to a numerical value (assuming it's a string)
+            double moneyToAdd = Double.parseDouble(amount);
+            if(moneyToAdd < 0) {
+                logger.error("Negative value attempted to be added");
+                return "Fail";
+            }
+
+            // Decode the name parameter
+            username = URLDecoder.decode(name, "UTF-8");
+
+            // Perform any necessary operations with the username
+            try(Connection connection = dataSource.getConnection()){
+                String insertAccount = ("INSERT INTO Transaction(transactionID,Type,amount,`to`,`from`,`time`)" + "VALUES (?,?,?,?,?,?)");
+                PreparedStatement statement = connection.prepareStatement(insertAccount);
+
+                PreparedStatement idStatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
+                idStatement.setString(1, username);
+                ResultSet set = idStatement.executeQuery();
+                set.next();
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm");
+                LocalDateTime ldt = LocalDateTime.now();
+                dtf.format(ldt);
+
+                statement.setString(1, UUID.randomUUID().toString());
+                statement.setString(2, "TRANSFER");
+                statement.setDouble(3, moneyToAdd);
+                statement.setString(4, set.getString(1));
+                statement.setString(5, "01234567-89ab-cdef-ghij-scot-bank-000000000000");
+                statement.setString(6,ldt.toString());
+                statement.executeUpdate();
+
+                idStatement.close();
+                statement.close();
+            }catch (SQLException e){
+                // If something does go wrong this will log the stack trace
+                logger.error("Database Error Occurred", e);
+                // And return a HTTP 500 error to the requester
+                throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
+            }
+
+            // Return a success message
+            return "success";
+        } catch (NumberFormatException e) {
+            // If the amount is not a valid number
+            e.printStackTrace(); // Log the error
+            return "Invalid amount format";
+        } catch (UnsupportedEncodingException e) {
+            // If decoding the name parameter fails
+            e.printStackTrace(); // Log the error
+            return "Error decoding name parameter";
+        } catch (Exception e) {
+            // If any other exception occurs
+            e.printStackTrace(); // Log the error
+            return "Error adding money";
+        }
+    }
+
 
     @POST("/handleButtonClick")
     public String handleButtonClick(@FormParam("username") String data) throws SQLException {
-//        HelperMethods accounts = new HelperMethods();
         String username;
         try {
             username = URLDecoder.decode(data, "UTF-8");
@@ -228,24 +286,10 @@ public class Accounts {
     }
 
 
-    private double[] getIncome() {
-        double income[] = new double[12];
 
-
-        return income;
-    }
-
-    private double[] getSpending() {
-        double spend[] = new double[12];
-
-
-        return spend;
-    }
-
-    @GET("/income/{username}")
-    public double income(@PathParam String username) {
-        double incomeData = 0.0;
-        ArrayList<Account> accounts = HelperMethods.getAccountList();
+    @GET("/withdrawals/{username}")
+    public double getWithdrawals(@PathParam String username) {
+        double withdrawData = 0.0;
 
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement IDstatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
@@ -254,22 +298,100 @@ public class Accounts {
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
             String id = set.getString("AccountId");
 
-            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_income FROM `Transaction` WHERE `type` = 'Deposit'"); //or collect roundups
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_withdrawals FROM `Transaction` WHERE `type` = 'WITHDRAWAL' AND `from` = ?");
+            statement.setString(1,id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                incomeData = resultSet.getDouble("total_income");
+                withdrawData = resultSet.getDouble("total_withdrawals");
             }
         } catch (SQLException e) {
             logger.error("Error occurred while fetching income data", e);
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching income data");
         }
-        System.out.println(incomeData);
-        return incomeData;
+        System.out.println(withdrawData);
+        return withdrawData;
     }
 
-    @GET("/outgoing/{username}")
-    public double outgoing(@PathParam String username) {
-        double totalOutgoing = 0.0;
+    @GET("/payments/{username}")
+    public double getPayments(@PathParam String username) {
+        double totalPayments = 0.0;
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement IDstatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
+            IDstatement.setString(1, username);
+            ResultSet set = IDstatement.executeQuery();
+            if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
+            String id = set.getString("AccountId");
+
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_payments FROM `Transaction` WHERE `type` = 'PAYMENT' AND `from` = ?");
+            statement.setString(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                totalPayments = resultSet.getDouble("total_payments");
+            }
+        } catch (SQLException e) {
+            logger.error("Error occurred while fetching outgoing data", e);
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
+        }
+        System.out.println(totalPayments);
+        return totalPayments;
+    }
+
+    @GET("/deposits/{username}")
+    public double getDeposits(@PathParam String username) {
+        double totalDepos = 0.0;
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement IDstatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
+            IDstatement.setString(1, username);
+            ResultSet set = IDstatement.executeQuery();
+            if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
+            String id = set.getString("AccountId");
+
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_deposits FROM `Transaction` WHERE `type` = 'DEPOSIT' AND `to` = ?");
+            statement.setString(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                totalDepos = resultSet.getDouble("total_deposits");
+            }
+        } catch (SQLException e) {
+            logger.error("Error occurred while fetching outgoing data", e);
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
+        }
+        System.out.println(totalDepos);
+        return totalDepos;
+    }
+
+    @GET("/transfers/{username}")
+    public double getTransfersTo(@PathParam String username) {
+        double totalTransfers = 0.0;
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement IDstatement = connection.prepareStatement("SELECT AccountId FROM `AccountList` WHERE `customerName` = ?");
+            IDstatement.setString(1, username);
+            ResultSet set = IDstatement.executeQuery();
+            if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
+            String id = set.getString("AccountId");
+
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_transfers FROM `Transaction` WHERE `type` = 'TRANSFER' AND `to` = ? OR `from` = ?");
+            statement.setString(1, id);
+            statement.setString(2, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                totalTransfers = resultSet.getDouble("total_transfers");
+            }
+        } catch (SQLException e) {
+            logger.error("Error occurred while fetching outgoing data", e);
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
+        }
+        System.out.println(totalTransfers);
+        return totalTransfers;
+    }
+
+
+    @GET("/collectRoundUps/{username}")
+    public double collectRound(@PathParam String username) {
+        double totalRoundsCollected = 0.0;
         ArrayList<Account> accounts = HelperMethods.getAccountList();
 
         try (Connection connection = dataSource.getConnection()) {
@@ -279,47 +401,75 @@ public class Accounts {
             if (!set.next()) throw new StatusCodeException(StatusCode.NOT_FOUND, "Account Not Found");
             String id = set.getString("AccountId");
 
-            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_outgoing FROM `Transaction` WHERE `from` = ?"); //once api working change to type payment/withdrawl
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_rounds FROM `Transaction` WHERE `to` = ? AND `from` = ?");
             statement.setString(1, id);
+            statement.setString(2, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                totalOutgoing = resultSet.getDouble("total_outgoing");
+                totalRoundsCollected = resultSet.getDouble("total_rounds");
             }
         } catch (SQLException e) {
             logger.error("Error occurred while fetching outgoing data", e);
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
         }
-        System.out.println(totalOutgoing);
-        return totalOutgoing;
+        System.out.println(totalRoundsCollected);
+        return totalRoundsCollected;
     }
 
 
-    public double getOutgoing(String username) {
-        double totalOutgoing = 0.0;
-        String id = null;
+    @GET("/display_user_transactions")
+    public ModelAndView displayUserTransactions(@QueryParam("username") String user) {
+        Map<String, Object> model = new HashMap<>();
+        String username;
+
+        try {
+            username = URLDecoder.decode(user, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            username = user;
+        }
         ArrayList<Account> accounts = HelperMethods.getAccountList();
 
+        String userID = "";
         for (Account account : accounts) {
-            if (username.equals(account.getUsername())) {
-                id = account.getId();
-                break;
+            if (account.getName().equals(username)) {
+                System.out.println("WE FOUND IT");
+                userID = account.getId().toString();
+                break; // No need to continue once found
             }
         }
-
+        System.out.println("CHECK THIS OUT " + userID);
 
         try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT SUM(amount) AS total_outgoing FROM Transaction WHERE `from` = ?");
-            statement.setString(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                totalOutgoing = resultSet.getDouble("total_outgoing");
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `Transaction` WHERE `from` = ? OR `to` = ?");
+            stmt.setString(1, userID);
+            stmt.setString(2, userID);
+            ResultSet set = stmt.executeQuery();
+            ArrayList<Transactions> transactions = new ArrayList<>();
+            while (set.next()) {
+                Transactions transaction = new Transactions(
+                        set.getString("time"),
+                        set.getDouble("amount"),
+                        set.getString("from"),
+                        set.getString("transactionID"),
+                        set.getString("to"),
+                        set.getString("Type")
+                );
+                transactions.add(transaction);
             }
+            model.put("transactions", transactions); // Change key to "transactions"
+            model.put("name", username);
         } catch (SQLException e) {
-            logger.error("Error occurred while fetching outgoing data", e);
-            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Error occurred while fetching outgoing data");
+            e.printStackTrace(); // Log the exception for debugging
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
         }
-        System.out.println(totalOutgoing);
-        return totalOutgoing;
+
+        return new ModelAndView("user_transaction.hbs", model);
     }
+
+
+
 
 }
