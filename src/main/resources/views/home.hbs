@@ -72,7 +72,7 @@
             </div>
             <div class="block1">
                 <div class="display_acc_data">
-                    <h2 style = "">Hello, {{name}}</h2>
+                    <h2 style = "">Hello {{name}}</h2>
                 </div>
                 <!-- <p style = "font-size: 15px; margin-bottom: 30px;">accNo sortCode</p> -->
                 <div class="balance_available">
@@ -80,7 +80,7 @@
                     <h4>{{bal}}</h4>
                 </div>
                 <div>
-                     <button type="button" class="btn btn-outline-secondary btn-lg" onclick="add_money()">Add more money</button>
+                     <button type="button" class="btn btn-outline-secondary btn-lg" onclick="add_money()">Request money</button>
                     <button type="button" class="btn btn-outline-secondary btn-lg" id="submitButton" onclick="round()">Round Up</button>
                     </a>
                 </div>
@@ -136,7 +136,7 @@
             </div>
         </div>
         <div class="container" style="margin-top: 30px;">
-            <button type="button" class="btn btn-outline-secondary" onclick ="trans()">See more of my transactions</button>
+            <button type="button" class="btn btn-outline-secondary" >See more of my transactions</button>
         </div>
     </div>
 
@@ -158,29 +158,6 @@
 <script>
    var nameValue = "{{name}}";
     console.log(nameValue);
-function trans() {
-    fetch("/bank/display_user_transactions?username={{name}}", {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.text();
-    })
-    .then(data => {
-        // Redirect to the user_transactions view
-        window.location.href = '/bank/display_user_transactions?username={{name}}';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-
 
 function add_money(){
     var entry = prompt("How much money do you want to add?");
@@ -194,7 +171,6 @@ function add_money(){
     })
     .then(response => response.text())
     .then(data => {
-        alert("You successfully added "+entry+" pounds to you account")
         console.log(data); // Output the response from the server
     })
     .catch(error => {
