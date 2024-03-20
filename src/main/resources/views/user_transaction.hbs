@@ -52,44 +52,36 @@
 
 
 </style>
-<div class="container">
-    <h1>All Accounts</h1>
-    <div class="">
-        <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='http://localhost:8080/manager/transaction'">onclick link!</a>">I want to see transactions</button>
-    </div>
+
+<h1>{{name}}'s transactions</h1>
+<div id="accountsTable">
+    <h2>Transactions</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each transactions}}
+            <tr>
+                <td>{{this.id}}</td>
+                <td>{{this.from}}</td>
+                <td>{{this.to}}</td>
+                <td>{{this.type}}</td>
+                <td>{{this.amount}}</td>
+                <td>{{this.time}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
 </div>
-
-    <div id="accountsTable"></div>
-
-<script>
-        fetch("/bank/displayAccounts", {
-            method: "GET",
-            headers: {
-                "Content-Type": "text/plain"
-            }
-        })
-                .then(response => response.text())
-                //console.log(response);
-                .then(data => {
-
-                    var accountsArray = data.split(';');
-
-                    var tableHTML = "<table border='1'><tr><th>ID</th><th>Name</th><th>Starting Balance</th><th>Round up?</th></tr>";
-                    for (var i = 0; i < accountsArray.length - 1; i++) {
-                        var accountDetails = accountsArray[i].split(',');
-                        tableHTML += "<tr><td>" + accountDetails[0] + "</td><td>" + accountDetails[1] +
-                                "</td><td>" + accountDetails[2] + "</td><td>" + accountDetails[3] + "</td></tr>";
-                    }
-                    tableHTML += "</table>";
-
-                    // Display the table
-                    document.getElementById("accountsTable").innerHTML = tableHTML;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-
-    });
-</script>
 
 </body>
 </html>
