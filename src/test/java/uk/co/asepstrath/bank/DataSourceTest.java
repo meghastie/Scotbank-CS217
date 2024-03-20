@@ -45,14 +45,14 @@ public class DataSourceTest {
 
         String user = "Miss Lavina Waelchi";
         String bal = "4069.61";
-        String types = "DEPOSIT";
+        String types = "PAYMENT";
 
         HashMap<String, String> replace = new HashMap<>();
         replace.put("{{name}}",user);
         replace.put("{{bal}}",bal);
-        replace.put("{{amount1}}","2750.0");
-        replace.put("{{amount2}}","2750.0");
-        replace.put("{{amount3}}","2750.0");
+        replace.put("{{amount1}}","200.0");
+        replace.put("{{amount2}}","209.0");
+        replace.put("{{amount3}}","84.0");
         replace.put("{{type1}}",types);
         replace.put("{{type2}}",types);
         replace.put("{{type3}}",types);
