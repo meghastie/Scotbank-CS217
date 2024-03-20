@@ -146,7 +146,7 @@ public class App extends Jooby {
                 statement.executeUpdate();
             }
             statement.close();
-
+            System.out.println("trans done");
             /*
             //continue with next part - inserting data in 'Agile_Lab_Doc'
             String insert = ("INSERT INTO Customer(name, username, password, dob)"
@@ -154,20 +154,13 @@ public class App extends Jooby {
             String sql = "SELECT * FROM Customer";
             ResultSet rs = stmt.executeQuery(sql);
              */
-            /*
-
-
-            ResultSet result = stmt.executeQuery("SELECT * FROM Transaction");
-            while(result.next()){
-                System.out.println(result.getString("transactionID") + " " + result.getString("Type") + " " + result.getDouble("amount") + " " + result.getString("to") + " " + result.getString("from"));
-            }
 
 
 
 
 
 
-             */
+
             //NEED CUSTOMER CLASS FOR BELOW - USING EXAMPLE
             //while (rs.next()) {
             //  int id = rs.getInt("id");

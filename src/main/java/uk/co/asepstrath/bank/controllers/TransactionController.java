@@ -31,8 +31,6 @@ public class TransactionController {
     public TransactionController(DataSource dataSource, Logger logger) {
         this.dataSource = dataSource;
         this.logger = logger;
-        transactionMap = new HashMap<>();
-        fetchTransactionsFromDatabase();
 
     }
 
@@ -43,7 +41,7 @@ public class TransactionController {
 
     private void fetchTransactionsFromDatabase() {
         try (Connection connection = dataSource.getConnection()) {
-            String query = "SELECT * FROM `Transaction` WHERE `transactionID` =?";
+            String query = "SELECT * FROM `Transaction`";
             PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
 

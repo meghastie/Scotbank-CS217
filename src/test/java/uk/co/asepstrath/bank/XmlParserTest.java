@@ -1,5 +1,6 @@
 package uk.co.asepstrath.bank;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.services.XmlParser;
 
@@ -9,7 +10,6 @@ class XmlParserTest {
 
     @Test
     void parser() {
-        XmlParser p = new XmlParser();
-        p.Parser();
+        Assertions.assertNotNull(XmlParser.Parser());
     }
 }

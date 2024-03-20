@@ -187,7 +187,7 @@ public class Accounts {
                 dtf.format(ldt);
 
                 statement.setString(1, UUID.randomUUID().toString());
-                statement.setString(2, "Transfer");
+                statement.setString(2, "TRANSFER");
                 statement.setDouble(3, moneyToAdd);
                 statement.setString(4, set.getString(1));
                 statement.setString(5, "01234567-89ab-cdef-ghij-scot-bank-000000000000");
