@@ -56,7 +56,7 @@ public class HelperMethods {
                 if(result.getString("Type").equals("PAYMENT")){
                     balance -= result.getDouble("amount");
                 } else if (result.getString("Type").equals("TRANSFER")) {
-                    if(result.getString("to").equals("635e583f-0af2-47cb-9625-5b66ba30e188"))
+                    if(result.getString("to").equals(id))
                         balance += result.getDouble("amount");
                     else
                         balance -= result.getDouble("amount");
