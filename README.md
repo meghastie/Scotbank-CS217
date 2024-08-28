@@ -1,12 +1,5 @@
-# Your-Bank
+# ScotBank
 
-Welcome to your-bank!!
+Scotbank was created by Megan Hastie, Luke Morrison, Kathyrn Wildsmith, Nikita Kyrushko and Hashm Khan for the practical part of our second year elective ran by JP Morgan - Agile Software Engineering in Practice.
 
-## running
-
-    ./mvnw.cmd clean jooby:run
-
-## building
-
-    ./mvnw.cmd clean package
-
+Scotbank is an online banking app developed for a family owned bank who decided to integrate more technology into their business. The application allows ScotBank customers to log in and view details around their balance, spending and transactions. To create ScotBank, we had to develop a frontend and a backend, and then connect all components to create a working application. This was a completely independent project, the only resources we were provided with were two API's - one containing details of every account in the bank and the other containing all transactions. We extracted the data from the API's into our database - parsing it differently depending if it was a JSON or XML file - and used endpoints and handlebars to communicate with the frontend. Form validation ensured only customers who's data were stored in the API were able to log in and see only their specific details, such as available balance, all of their transactions, types of transactions and more - which was obviously different for each customer. The application will only work if a name is entered which exists in the API. The bank manager can also log in to see the list of all acounts, all transactions and the top spenders.
